@@ -130,8 +130,8 @@ class Table // Crud table + delete
        
      
         {
-
-            echo "<a href='add.php?table=". $table. "'>Add</a>";
+            echo "<br>";
+            echo "<a href='add.php?table=". $table. "'class='add'>Maak aan</a>";
             // Haal de kolomnamen op uit de database
             $stmt = $conn->prepare("DESCRIBE $table");
             $stmt->execute();
