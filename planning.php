@@ -14,9 +14,17 @@
 <?php 
 echo '<button onclick="window.location.href=\'index.php\'">Index</button>';
 include_once('Oop.php');
+session_start();
 
-
-$table = new Table("planning",false, true);
+ if ($_SESSION["rol"] === "direction" || $_SESSION["rol"] === "chaufeur") 
+ {
+    $table = new Table("planning",false, true); // table read only / can sea
+}
+ else 
+ {
+ //$table2 = new Table("planning",true, false); // table read only / can sea
+ }
+var_dump($_SESSION["rol"]);
 
 ?>
 
