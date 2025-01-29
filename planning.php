@@ -14,14 +14,22 @@
 <?php 
 echo '<button onclick="window.location.href=\'index.php\'">Index</button>';
 include_once('Oop.php');
+session_start();
 
+ if ($_SESSION["rol"] === "directie" || $_SESSION["rol"] === "chauffeur" || $_SESSION["rol"] === "winkelpersoneel") 
+ {
+    $table = new Table("planning",false, true); // table read only / can sea
+}
+ else 
+ {
+ $table2 = new Table("planning",true, false); // table read only / can sea
+ }
 
-$table = new Table("planning",false, true);
 
 ?>
 
 <!-- 
-Document Name: crud.php
-Made by: Stijn Verbakel
+Document Name: planning.php
+Made by: sem van Haaften
 -->
 

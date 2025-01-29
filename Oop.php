@@ -125,17 +125,18 @@ class Table // Crud table + delete
        
             $database = new Database();
             $conn = $database->conn;
-            session_start();
+            //session_start();
 
        
      
         {
-            
+
+            echo "<a href='add.php?table=". $table. "'>Add</a>";
             // Haal de kolomnamen op uit de database
             $stmt = $conn->prepare("DESCRIBE $table");
             $stmt->execute();
             $columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
-            
+            $_SESSION["previouslink"] = $_SERVER['REQUEST_URI'];
             $_SESSION["table"] = $table;
             if (!empty($_GET)) 
             {
@@ -143,7 +144,9 @@ class Table // Crud table + delete
                $id = $_GET["menuid"];
                $sql = "DELETE FROM $table WHERE id = $id";
                $conn->exec($sql);
-               header("location: ".$_SERVER['REQUEST_URI'].".php");
+               $url = strtok($_SERVER['REQUEST_URI'], '?');
+
+               header("location: ".$url."");
             } 
             if ($cansee == false) {
                 header("location: home.php");
@@ -182,7 +185,7 @@ class Table // Crud table + delete
                             <td>
                                 <?php
                                 echo "<a href='./edit.php?menuid=" . $row['id'] . "&table=" . $table . "'>E</a>";
-                                echo "<a href='".$_SERVER['REQUEST_URI'].".php?menuid=" . $row['id'] . "'>D</a>";
+                                echo "<a href='".$_SERVER['REQUEST_URI']."?menuid=" . $row['id'] . "'>D</a>";
                                 ?>
                             </td>
                             <?php } ?>
@@ -239,7 +242,7 @@ class edit // edit data
             
                 unset($_POST);
                 // Redirect to the admin panel
-                header("Location: ./klant.php");
+                header("Location: ./home.php");
                 exit;
             } catch (PDOException $e) {
                 echo "Error: " . $e->getMessage();
@@ -261,22 +264,37 @@ class edit // edit data
         if ($editdata) 
         {
             echo '<form method="POST" action="./edit.php">';
-            foreach ($editdata as $key => $value) {
+            foreach ($editdata as $column) {
+            
+                $key = $column['Field'];
+                if ($key == 'id') {
+                }else{
                 echo '<div>';
                 echo '<label for="' . htmlspecialchars($key) . '">' . htmlspecialchars($key) . ':</label>';
+    
+                // Render different input types based on column name
                 if ($key === 'ProductText') {
                     // Textarea for longer text
-                    echo '<textarea name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">' . htmlspecialchars($value) . '</textarea>';
-                } elseif ($key === 'ProductFoto') {
-                    // File input for photo
-                    echo '<input type="file" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
-                    echo '<p>Current File: ' . htmlspecialchars($value) . '</p>';
-                } else {
+                    echo '<textarea name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '"></textarea>';
+                } elseif ($key === 'ophalen_of_bezorgen') {
+                    // File input for photo (Note: Make sure to handle file uploads correctly)
+                    echo '<select name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
+                    echo '<option value="Ophalen">Ophalen</option>';
+                    echo '<option value="Bezorgen">Bezorgen</option>';
+                    echo '</select>';
+                                } elseif ($key === 'afspraak_op') {
+                    // File input for photo (Note: Make sure to handle file uploads correctly)
+                    echo '<input type="datetime-local" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
+                }
+            elseif ($key === 'ingeboekt_op') {
+                // File input for photo (Note: Make sure to handle file uploads correctly)
+                echo '<input type="datetime-local" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
+            } else {
                     // Standard text input
-                    echo '<input type="text" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '" value="' . htmlspecialchars($value) . '">';
+                    echo '<input type="text" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
                 }
                 echo '</div>';
-            }
+                }}
             echo '<button type="submit">Submit</button>';
             echo '<button onclick="window.location.href=\'./crud.php\'">Admin</button>'; 
             echo '</form>';
@@ -288,93 +306,137 @@ class edit // edit data
     }  
 }
 
-class add // edit data
+class Add // Add data to table
 {
     function __construct() 
     {
+        // Initialize the database connection
         $database = new Database();
         $conn = $database->conn;
         session_start();
 
-        if(!empty($_POST)) // edit verwerken
-        {
-            try {
-                $tableEdit = $_SESSION["tableAdd"];
-                $idEdit = $_SESSION["idAdd"];
-                // Set PDO error mode
-                $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            
-                // Start building the SQL query
-                $sql = "$tableEdit SET ";
-                $params = [];
-                foreach ($_POST as $column => $value) {
-                    // Skip if the column is empty
-                    if (!empty($value)) {
-                        $sql .= "$column = :$column, "; 
-                        $params[$column] = $value;
-                    }
-                }
-            
-                // Remove the trailing comma and space
-                $sql = rtrim($sql, ', ');
-            
-                // Add the WHERE clause
-                $sql .= " WHERE id = :id";
-                $params['id'] = $idEdit;
-            
-                // Prepare and execute the statement
-                $stmt = $conn->prepare($sql);
-                $stmt->execute($params);
-            
-                unset($_POST);
-                // Redirect to the admin panel
-                header("Location: ./crud.php");
-                exit;
-            } catch (PDOException $e) {
-                echo "Error: " . $e->getMessage();
-            }
+        // Handle the form submission
+        if (!empty($_POST)) {
+            $this->handleFormSubmit($conn);
         }
-      
 
-        $table = $_GET["table"];
-        $id = 1;
-        $_SESSION["tableAdd"] = $table;
-        $_SESSION["idAdd"] = $id;
-        
-        $edit = $conn->prepare("SELECT * FROM $table WHERE id = :id");
-        $edit->bindParam(':id', $id, PDO::PARAM_INT);
-        $edit->execute();
-        $edit->setFetchMode(PDO::FETCH_ASSOC);
-        $editdata = $edit->fetch();
-        
-        if ($editdata) 
-        {
-            echo '<form method="POST" action="./edit.php">';
-            foreach ($editdata as $key => $value) {
-                echo '<div>';
-                echo '<label for="' . htmlspecialchars($key) . '">' . htmlspecialchars($key) . ':</label>';
-                if ($key === 'ProductText') {
-                    // Textarea for longer text
-                    echo '<textarea name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '"></textarea>';
-                } elseif ($key === 'ProductFoto') {
-                    // File input for photo
-                    echo '<input type="file" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
-                    echo '<p>Current File: ' . htmlspecialchars($value) . '</p>';
-                } else {
-                    // Standard text input without pre-filled value
-                    echo '<input type="text" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
-                }
-                echo '</div>';
+        // Display the form for adding data to the new row
+        $this->displayForm($conn);
+    }
+
+    // Function to handle form submission and insert data into the database
+    private function handleFormSubmit($conn)
+    {
+        try {
+            // Get the table name from the GET parameter
+            $tableAdd = $_GET["table"];
+            
+            if (empty($tableAdd)) {
+                echo 'Table name is missing.';
+                exit;
             }
-            echo '<button type="submit">Submit</button>';
-            echo '</form>';
+
+            // Set PDO error mode
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            // Start building the SQL query for INSERT
+            $sql = "INSERT INTO $tableAdd (";
+            $sqlValues = "VALUES (";
+            $params = [];
+
+            // Loop through the POST data and prepare columns and values
+            foreach ($_POST as $column => $value) {
+                // Skip if the column is empty
+                if (!empty($value)) {
+                    $sql .= "$column, ";
+                    $sqlValues .= ":$column, ";
+                    $params[$column] = $value;
+                }
+            }
+
+            // Remove the trailing commas and spaces
+            $sql = rtrim($sql, ', ') . ') ';
+            $sqlValues = rtrim($sqlValues, ', ') . ')';
+
+            // Complete the final SQL query
+            $sql .= $sqlValues;
+
+            // Prepare and execute the statement
+            $stmt = $conn->prepare($sql);
+            $stmt->execute($params);
+            $previouslink = $_SESSION["previouslink"];
+            $url = strtok($previouslink, '?');
+
+            // Redirect to the admin panel after adding the data
+            header("Location: ".$url."");
+            
+            exit;
+
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage();
         }
-        else 
-        {
-            echo 'No data found.';
-        } 
-    }  
+    }
+
+    // Function to display the form for adding data to the table
+    private function displayForm($conn)
+    {
+        // Get the table name from the GET parameter
+        $tableAdd = $_GET["table"];
+        $_SESSION["tableAdd"] = $tableAdd;
+        $previouslink = $_SESSION["previouslink"];
+
+        // Fetch the table column names
+        $columns = $conn->prepare("DESCRIBE $tableAdd");
+        $columns->execute();
+
+        // Debugging: Check if columns are returned
+        if ($columns->rowCount() > 0) {
+            $columnsData = $columns->fetchAll(PDO::FETCH_ASSOC);
+        } else {
+            echo "No columns found for table $tableAdd.";
+            exit;
+        }
+
+        // Start the form
+        echo '<form method="POST" action="./add.php?table='.$tableAdd.'">'; // Change action to match the correct script
+        foreach ($columnsData as $column) {
+            
+            $key = $column['Field'];
+            if ($key == 'id') {
+            }else{
+            echo '<div>';
+            echo '<label for="' . htmlspecialchars($key) . '">' . htmlspecialchars($key) . ':</label>';
+
+            // Render different input types based on column name
+            if ($key === 'ProductText') {
+                // Textarea for longer text
+                echo '<textarea name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '"></textarea>';
+            } elseif ($key === 'ophalen_of_bezorgen') {
+                // File input for photo (Note: Make sure to handle file uploads correctly)
+                echo '<select name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
+                echo '<option value="Ophalen">Ophalen</option>';
+                echo '<option value="Bezorgen">Bezorgen</option>';
+                echo '</select>';
+                            } elseif ($key === 'afspraak_op') {
+                // File input for photo (Note: Make sure to handle file uploads correctly)
+                echo '<input type="datetime-local" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
+            }
+        elseif ($key === 'ingeboekt_op') {
+            // File input for photo (Note: Make sure to handle file uploads correctly)
+            echo '<input type="datetime-local" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
+        } else {
+                // Standard text input
+                echo '<input type="text" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
+            }
+            echo '</div>';
+            }}
+
+        // Submit button for the form
+        echo '<button type="submit">Submit</button>';
+        echo '</form>';
+    }
 }
+
 ?>
 
 <!-- 
