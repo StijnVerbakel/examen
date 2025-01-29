@@ -103,16 +103,21 @@ var_dump($_SESSION)
             grid-template-columns: repeat(2,400px);
             grid-template-rows: repeat(2,200px);
             gap: 20px;
-            margin: auto;
+            justify-content: center;
+            margin-left: auto;
+            margin-right: auto;
             width: 50%;
             margin-top: 5%;            
         }
 
         .grid-item {
             justify-content: center;
-            align-items: center;
+            width: 80%;
+            height: 80%;
+            padding: 10px;
             background-color: white;
             color: black;
+            text-align: center;
             text-decoration: none;
             border: 1px black solid;
             border-radius: 10px;
@@ -120,6 +125,7 @@ var_dump($_SESSION)
         }   
         
         .grid-item:hover {
+            cursor: pointer;
             background-color: grey;
             transform: scale(1.05);
         }
@@ -151,33 +157,31 @@ var_dump($_SESSION)
          </div>
     </header> 
     <div class="grid-container">
-        <div class="grid-item"> 
+        <?php
+        if ( $_SESSION["rol"] === "magazijn" ) 
+        {
+            echo'
+    <a href="artikelen.php"><div class="grid-item"> 
             <h3>Ritten</h3>
             <p>beschrijving</p>
-            <button><a href="planning.php">Ga naar ritten</a></button>
-        </div>
-        <div class="grid-item">
-            <h3>Voorraad beheer</h3>
-            <p>beschrijving</p>
-            <button><a href="magazijn.php">Ga naar voorraad beheer</a></button>
-        </div>
-        <div class="grid-item">
-            <h3>Artikelen</h3>
-            <p>beschrijving</p>
-            <button><a href="artikelen.php">Ga naar artikelen</a></button>
-        </div>
-        <div class="grid-item">
-            <h3>Klanten</h3>
-            <p>beschrijving</p>
-            <button><a href="Klant.php">ga naar klanten</a></button>
-        </div>
+            <button>Ga naar ritten</button>
+        </div></a>';
 
-    </div>
+        }elseif ( $_SESSION["rol"] === "directie" )  {
+i
+        }elseif ( $_SESSION["rol"] === "winkelpersoneel" )  {
+
+        }elseif ( $_SESSION["rol"] === "chauffeur" )  {
+
+        }else {
+
+        }
+?>
 </body>
 </html>
 
 
 <!-- 
 Document Name: home.php
-Made by: Anouk Grandia
+Made by: Sem van Haaften
 -->

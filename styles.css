@@ -1,6 +1,5 @@
 body {
     font-family: Arial, sans-serif;
-    margin: 20px;
     padding: 0;
     background-color: #f9f9f9;
     color: #333;
@@ -9,28 +8,37 @@ body {
 table {
     width: 100%;
     border-collapse: collapse;
+    
 }
 th, td {
     padding: 10px;
     text-align: left;
 }
 tr {
-    border-bottom: 1px solid black;
-}
-tr:last-child {
-    border-bottom: none;
+    border-top: 1px solid black;
 }
 
+tr:first-child {
+    border-top: none;
+
+    border-bottom:  1px solid black;
+}
+
+
+.addbutton{
+    margin-left: 90%;
+}
 .add {
+    
     background-color: #4da6ff; /* Light blue */
     color: white; /* White text */
     border: none;
     padding: 10px 15px;
     font-size: 16px;
+    max-height: 37px;
     cursor: pointer;
     border-radius: 5px;
     transition: background-color 0.3s ease;
-    margin-left: 80%;
 }
 
 .add:hover {
@@ -83,7 +91,6 @@ textarea {
 }
 
 button {
-    display: inline-block;
     padding: 10px 20px;
     background-color: #007BFF;
     color: #fff;

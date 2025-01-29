@@ -22,7 +22,7 @@ session_start();
 }
  else 
  {
- $table2 = new Table("voorraad",true, false); // table read only / can sea
+ $table = new Table("voorraad",true, false); // table read only / can sea
  }
 
 
