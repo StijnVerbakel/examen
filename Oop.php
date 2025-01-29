@@ -3,7 +3,7 @@
 class Database //database connection 
 {
     private $db = "localhost";
-    private $dbname = "template";
+    private $dbname = "centrumduurzaam";
     private $user = "root";
     private $pass = "";
     public $conn;
@@ -31,19 +31,19 @@ class login //login backend (after the post)
             $database = new Database();
             $conn = $database->conn; 
         
-            $rol = $conn->prepare("SELECT Rol,Id,GebruikersNaam From personeel WHERE GebruikersNaam LIKE '%$username%'"); // haal rol van gebruiker uit database
+            $rol = $conn->prepare("SELECT rollen,id,gebruikersnaam From gebruiker WHERE Gebruikersnaam LIKE '%$username%'"); // haal rol van gebruiker uit database
             $rol->execute();
             $rol->setFetchMode(PDO::FETCH_ASSOC);
             $rolreturn = $rol->fetch();
             
-            if (!empty($rolreturn["GebruikersNaam"]))
+            if (!empty($rolreturn["gebruikersnaam"]))
             { //bestaat email?
            
-                $ps = $conn->prepare("SELECT Wachtwoord FROM personeel WHERE GebruikersNaam = '$username'"); // haal het juiste password uit de database
+                $ps = $conn->prepare("SELECT wachtwoord FROM gebruiker WHERE gebruikersnaam = '$username'"); // haal het juiste password uit de database
                 $ps->execute();
                 $ps->setFetchMode(PDO::FETCH_ASSOC);
                 $psreturn = $ps->fetch();
-                $psreturn = ($psreturn["Wachtwoord"]);
+                $psreturn = ($psreturn["wachtwoord"]);
           
                 if (password_verify($password, $psreturn)) // check password correct
                 { // email en wachtwoord overeen?
@@ -52,9 +52,9 @@ class login //login backend (after the post)
                     session_start();
                     session_destroy();
                     session_start();
-                    $_SESSION["rol"] = $rolreturn['Rol']; // rol sesion
+                    $_SESSION["rol"] = $rolreturn['rollen']; // rol sesion
                     $_SESSION["username"] = $username; // username session
-                    $_SESSION["userId"] = $rolreturn["Id"];   // userid session
+                    $_SESSION["userId"] = $rolreturn["id"];   // userid session
                  
                     header("location: index.php");
                 } 
@@ -84,12 +84,11 @@ class registreren //registreren van een nieuw persoon/gebruiker in het systeem
             $Rol = $_POST['Rol'];
             $GebruikersNaam = $_POST['gebruikersnaam'];
             $Wachtwoord = $_POST['wachtwoord'];
-            $Adres = $_POST['Adres'];
             $database = new Database();
             $conn = $database->conn;
        
             $passwordhash = password_hash($Wachtwoord,PASSWORD_DEFAULT);
-            $gmailC = $conn->prepare("SELECT GebruikersNaam From personeel WHERE GebruikersNaam LIKE '$GebruikersNaam'"); // zoek oof er al een acount is op dit gmail
+            $gmailC = $conn->prepare("SELECT gebruikersnaam From gebruiker WHERE gebruikersnaam LIKE '$GebruikersNaam'"); // zoek oof er al een acount is op dit gmail
             $gmailC->execute();
             $gmailC->setFetchMode(PDO::FETCH_ASSOC);
             $gmailreturn = $gmailC->fetch();
@@ -98,7 +97,7 @@ class registreren //registreren van een nieuw persoon/gebruiker in het systeem
             if (empty($gmailreturn))
             { 
                  $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                 $sql = "INSERT INTO personeel (Rol, GebruikersNaam, Wachtwoord, Adres) VALUES ('$Rol', '$GebruikersNaam', '$passwordhash', '$Adres')"; // voegt acount to in database
+                 $sql = "INSERT INTO gebruiker (rollen, gebruikersnaam, wachtwoord) VALUES ('$Rol', '$GebruikersNaam', '$passwordhash')"; // voegt acount to in database
                         
                 
                  $conn->exec($sql);

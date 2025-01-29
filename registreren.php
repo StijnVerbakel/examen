@@ -12,11 +12,11 @@
         <label for="Rol">Rol:</label>
         <select id="Rol" name="Rol" required>
             <option value="">-- Selecteer een rol --</option>
-            <option value="Veiligheidsinspecteur">Veiligheidsinspecteur</option>
-            <option value="Technisch Medewerker">Technisch Medewerker</option>
-            <option value="Monteur">Monteur</option>
-            <option value="Waterbeheerder">Waterbeheerder</option>
-            <option value="Admin">Admin</option>
+            <option value="directie">directie</option>
+            <option value="magazijn">magazijn</option>
+            <option value="winkelpersoneel">winkelpersoneel</option>
+            <option value="chauffeur">chauffeur</option>
+            
         </select>
         <br><br> 
 
