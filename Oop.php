@@ -143,7 +143,7 @@ class Table // Crud table + delete
                $id = $_GET["menuid"];
                $sql = "DELETE FROM $table WHERE id = $id";
                $conn->exec($sql);
-               header("location: ./crud.php");
+               header("location: ./klant.php");
             } 
             
             ?>
@@ -174,13 +174,14 @@ class Table // Crud table + delete
                             <td>
                                 <?php
                                 echo "<a href='./edit.php?menuid=" . $row['id'] . "&table=" . $table . "'>E</a>";
-                                echo "<a href='./crud.php?menuid=" . $row['id'] . "'>D</a>";
+                                echo "<a href='./klant.php?menuid=" . $row['id'] . "'>D</a>";
                                 ?>
                             </td>
+                            
                         </tr>
                         <?php
                     }
-                    ?>
+                    echo "<a href='./add.php?table=" . $table . "'>+</a>"; ?>
                 </tbody>
             </table>
             <?php
@@ -230,7 +231,7 @@ class edit // edit data
             
                 unset($_POST);
                 // Redirect to the admin panel
-                header("Location: ./crud.php");
+                header("Location: ./klant.php");
                 exit;
             } catch (PDOException $e) {
                 echo "Error: " . $e->getMessage();
@@ -270,6 +271,95 @@ class edit // edit data
             }
             echo '<button type="submit">Submit</button>';
             echo '<button onclick="window.location.href=\'./crud.php\'">Admin</button>'; 
+            echo '</form>';
+        } 
+        else 
+        {
+            echo 'No data found.';
+        } 
+    }  
+}
+
+class add // edit data
+{
+    function __construct() 
+    {
+        $database = new Database();
+        $conn = $database->conn;
+        session_start();
+
+        if(!empty($_POST)) // edit verwerken
+        {
+            try {
+                $tableEdit = $_SESSION["tableEdit"];
+                $idEdit = $_SESSION["idEdit"];
+                // Set PDO error mode
+                $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            
+                // Start building the SQL query
+                $sql = "UPDATE $tableEdit SET ";
+                $params = [];
+                foreach ($_POST as $column => $value) {
+                    // Skip if the column is empty
+                    if (!empty($value)) {
+                        $sql .= "$column = :$column, "; 
+                        $params[$column] = $value;
+                    }
+                }
+            
+                // Remove the trailing comma and space
+                $sql = rtrim($sql, ', ');
+            
+                // Add the WHERE clause
+                $sql .= " WHERE id = :id";
+                $params['id'] = $idEdit;
+            
+                // Prepare and execute the statement
+                $stmt = $conn->prepare($sql);
+                $stmt->execute($params);
+            
+                unset($_POST);
+                // Redirect to the admin panel
+                header("Location: ./crud.php");
+                exit;
+            } catch (PDOException $e) {
+                echo "Error: " . $e->getMessage();
+            }
+        }
+      
+
+        $table = $_GET["table"];
+        $id = 1;
+        $_SESSION["tableEdit"] = $table;
+        $_SESSION["idEdit"] = $id;
+        
+        $edit = $conn->prepare("SELECT * FROM $table WHERE id = :id");
+        $edit->bindParam(':id', $id, PDO::PARAM_INT);
+        $edit->execute();
+        $edit->setFetchMode(PDO::FETCH_ASSOC);
+        $editdata = $edit->fetch();
+        
+        if ($editdata) 
+        {
+            echo '<form method="POST" action="./edit.php">';
+            foreach ($editdata as $key => $value) {
+                echo '<div>';
+                echo '<label for="' . htmlspecialchars($key) . '">' . htmlspecialchars($key) . ':</label>';
+                if ($key === 'ProductText') {
+                    // Textarea for longer text
+                    echo '<textarea name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">' . htmlspecialchars($value) . '</textarea>';
+                } elseif ($key === 'ProductFoto') {
+                    // File input for photo
+                    echo '<input type="file" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
+                    echo '<p>Current File: ' . htmlspecialchars($value) . '</p>';
+                } else {
+                    // Standard text input
+                    echo '<input type="text" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '" value="' . htmlspecialchars($value) . '">';
+                }
+                echo '</div>';
+            }
+            echo '<button type="submit">Submit</button>';
+           
             echo '</form>';
         } 
         else 
