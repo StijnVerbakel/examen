@@ -180,10 +180,12 @@ class Table // Crud table + delete
                             <?php } ?>
                             <?php if ($readonly == false) { ?>
                             <td>
+                                <?php
                                 echo "<a href='./edit.php?menuid=" . $row['id'] . "&table=" . $table . "'>E</a>";
                                 echo "<a href='./crud.php?menuid=" . $row['id'] . "'>D</a>";
                                 ?>
                             </td>
+                            <?php } ?>
                         </tr>
                         <?php
                     }
@@ -195,7 +197,7 @@ class Table // Crud table + delete
         }
             
     }
-}}
+}
 
 class edit // edit data
 {
