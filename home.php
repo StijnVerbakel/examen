@@ -1,6 +1,7 @@
 <?php
 include_once('Oop.php');
 session_start();
+var_dump($_SESSION)
 ?>
 <!DOCTYPE html>
 <html lang="nl">
@@ -97,8 +98,33 @@ session_start();
             display: block;
         }
 
-    </style>
-    
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2,400px);
+            grid-template-rows: repeat(2,200px);
+            gap: 20px;
+            margin: auto;
+            width: 50%;
+            margin-top: 5%;            
+        }
+
+        .grid-item {
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+            color: black;
+            text-decoration: none;
+            border: 1px black solid;
+            border-radius: 10px;
+            transition: background-color 0.3s, transform 0.2s;
+        }   
+        
+        .grid-item:hover {
+            background-color: grey;
+            transform: scale(1.05);
+        }
+
+    </style>   
 </head>
 <body>
     <header class="menu">
@@ -124,17 +150,28 @@ session_start();
             </div>
          </div>
     </header> 
-    <div class="1">
+    <div class="grid-container">
+        <div class="grid-item"> 
+            <h3>Ritten</h3>
+            <p>beschrijving</p>
+            <button><a href="planning.php">Ga naar ritten</a></button>
+        </div>
+        <div class="grid-item">
+            <h3>Voorraad beheer</h3>
+            <p>beschrijving</p>
+            <button><a href="magazijn.php">Ga naar voorraad beheer</a></button>
+        </div>
+        <div class="grid-item">
+            <h3>Artikelen</h3>
+            <p>beschrijving</p>
+            <button><a href="artikelen.php">Ga naar artikelen</a></button>
+        </div>
+        <div class="grid-item">
+            <h3>Klanten</h3>
+            <p>beschrijving</p>
+            <button><a href="Klant.php">ga naar klanten</a></button>
+        </div>
 
-    </div>
-    <div class="2">
-
-    </div>
-    <div class="3">
-
-    </div>
-    <div class="4">
-        
     </div>
 </body>
 </html>
