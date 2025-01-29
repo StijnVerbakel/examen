@@ -12,7 +12,6 @@
             <input type="password" name="password" placeholder="Wachtwoord" class="input-field" required>
             <button type="submit" class="btn">Inloggen</button>
             <?php echo '<button onclick="window.location.href=\'./registreren.php\'">Registreren</button>'; ?>
-            <?php echo '<button onclick="window.location.href=\'./index.php\'">Index</button>'; ?>
         </form>
     </div>  
 </body>

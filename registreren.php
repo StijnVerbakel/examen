@@ -37,7 +37,7 @@
 
         <!-- Verzenden -->
         <button type="submit">Verzenden</button>   
-        <?php echo '<button onclick="window.location.href=\'./Login.php\'">Go to Inlog</button>'; ?>
+        <?php echo '<button onclick="window.location.href=\'./index.php\'">Go to Inlog</button>'; ?>
     </form>
    
 </body>
