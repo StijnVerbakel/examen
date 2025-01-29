@@ -242,7 +242,7 @@ class edit // edit data
             
                 unset($_POST);
                 // Redirect to the admin panel
-                header("Location: ./klant.php");
+                header("Location: ./home.php");
                 exit;
             } catch (PDOException $e) {
                 echo "Error: " . $e->getMessage();
@@ -350,9 +350,11 @@ class Add // Add data to table
             $stmt = $conn->prepare($sql);
             $stmt->execute($params);
             $previouslink = $_SESSION["previouslink"];
+            $url = strtok($previouslink, '?');
 
             // Redirect to the admin panel after adding the data
-            header("Location: ".$previouslink."");
+            header("Location: ".$url."");
+            
             exit;
 
         } catch (PDOException $e) {
@@ -403,7 +405,11 @@ class Add // Add data to table
                             } elseif ($key === 'afspraak_op') {
                 // File input for photo (Note: Make sure to handle file uploads correctly)
                 echo '<input type="datetime-local" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
-            } else {
+            }
+        elseif ($key === 'ingeboekt_op') {
+            // File input for photo (Note: Make sure to handle file uploads correctly)
+            echo '<input type="datetime-local" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
+        } else {
                 // Standard text input
                 echo '<input type="text" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
             }

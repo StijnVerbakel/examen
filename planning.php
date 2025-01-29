@@ -21,7 +21,7 @@ $table = new Table("planning",false, true);
 ?>
 
 <!-- 
-Document Name: crud.php
-Made by: Stijn Verbakel
+Document Name: planning.php
+Made by: sem van Haaften
 -->
 
