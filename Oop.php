@@ -120,7 +120,7 @@ class registreren //registreren van een nieuw persoon/gebruiker in het systeem
 class Table // Crud table + delete
 {
 
-    function __construct() 
+    function __construct($table) 
     {
        
             $database = new Database();
@@ -130,7 +130,7 @@ class Table // Crud table + delete
        
      
         {
-            if (!empty($_POST["table"])) {$table = $_POST["table"];} elseif(isset($_SESSION["table"])) {$table = $_SESSION["table"];} else {$table = "personeel";}
+            
             // Haal de kolomnamen op uit de database
             $stmt = $conn->prepare("DESCRIBE $table");
             $stmt->execute();
