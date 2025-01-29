@@ -16,15 +16,15 @@ echo '<button onclick="window.location.href=\'index.php\'">Index</button>';
 include_once('Oop.php');
 session_start();
 
- if ($_SESSION["rol"] === "directie" || $_SESSION["rol"] === "chauffeur") 
+ if ($_SESSION["rol"] === "directie" || $_SESSION["rol"] === "chauffeur" || $_SESSION["rol"] === "winkelpersoneel") 
  {
     $table = new Table("planning",false, true); // table read only / can sea
 }
  else 
  {
- //$table2 = new Table("planning",true, false); // table read only / can sea
+ $table2 = new Table("planning",true, false); // table read only / can sea
  }
-var_dump($_SESSION["rol"]);
+
 
 ?>
 
