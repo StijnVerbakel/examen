@@ -120,7 +120,7 @@ class registreren //registreren van een nieuw persoon/gebruiker in het systeem
 class Table // Crud table + delete
 {
 
-    function __construct($table) 
+    function __construct($table,$readonly, $cansee) 
     {
        
             $database = new Database();
@@ -143,17 +143,24 @@ class Table // Crud table + delete
                $id = $_GET["menuid"];
                $sql = "DELETE FROM $table WHERE id = $id";
                $conn->exec($sql);
-               header("location: ./klant.php");
+               header("location: ./crud.php");
             } 
-            
+            if ($cansee == false) {
+                header("location: home.php");
+
+            }
             ?>
             <table class="table table-hover">
                 <thead>
                     <tr>
                         <?php foreach ($columns as $column) { ?>
                             <th><?php echo htmlspecialchars($column); ?></th>
-                        <?php } ?>
+                        <?php }
+                        if ($readonly == false) {
+                        ?>
+                    
                         <th>Acties</th>
+                        <?php }?>
                     </tr>
                 </thead>
 
@@ -171,17 +178,16 @@ class Table // Crud table + delete
                             <?php foreach ($columns as $column) { ?>
                                 <td><?php echo htmlspecialchars($row[$column]); ?></td>
                             <?php } ?>
+                            <?php if ($readonly == false) { ?>
                             <td>
-                                <?php
                                 echo "<a href='./edit.php?menuid=" . $row['id'] . "&table=" . $table . "'>E</a>";
-                                echo "<a href='./klant.php?menuid=" . $row['id'] . "'>D</a>";
+                                echo "<a href='./crud.php?menuid=" . $row['id'] . "'>D</a>";
                                 ?>
                             </td>
-                            
                         </tr>
                         <?php
                     }
-                    echo "<a href='./add.php?table=" . $table . "'>+</a>"; ?>
+                    ?>
                 </tbody>
             </table>
             <?php
