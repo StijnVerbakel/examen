@@ -50,13 +50,11 @@ class login //login backend (after the post)
                     echo "<br> ingeloged";
                     unset($_POST); // leeg $_Post
                     session_start();
-                    session_destroy();
-                    session_start();
                     $_SESSION["rol"] = $rolreturn['rollen']; // rol sesion
                     $_SESSION["username"] = $username; // username session
                     $_SESSION["userId"] = $rolreturn["id"];   // userid session
                  
-                    header("location: home.php");
+                    header("location: index.php");
                 } 
                 else
                 {
