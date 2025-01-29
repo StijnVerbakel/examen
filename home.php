@@ -1,7 +1,5 @@
 <?php
 include_once('Oop.php');
-echo '<button onclick="window.location.href=\'planning.php\'">Go to Inlog</button>';
-echo '<button onclick="window.location.href=\'./klant.php\'">Klant overzicht</button>';
 session_start();
 ?>
 <!DOCTYPE html>
@@ -100,36 +98,49 @@ session_start();
         }
 
     </style>
- <div class="menu">
+    
+</head>
+<body>
+    <header class="menu">
         <h1>Kringloop Centrum</h1>
-        <a href="#home">Home</a>
+        <a href="home.php">Home</a>
 
-        <!-- Dropdown Menu voor Ritten -->
+        <!-- Dropdown menu voor ritten -->
         <div class="dropdown">
             <button class="dropbtn">Ritten</button>
             <div class="dropdown-content">
-                <a href="#rit1">Ritten planning</a>
+                <a href="planning.php">Ritten planning</a>
             </div>
         </div>
-        <a href="#contact">Voorraad</a>
-        <a href="#over">Beheer</a>
-        <!-- Dropdown Menu voor Admin -->
-        <div class="dropdown">
+
+        <!-- Dropdown menu voor admin -->
+         <div class="dropdown">
             <button class="dropbtn">Admin</button>
             <div class="dropdown-content">
-                <a href="#admin1">Ritten planning</a>
-                <a href="#admin2">Voorraadbeheer</a>
-                <a href="#admin3">Kledingstukken</a>
-                <a href="#admin3">Klanten</a>
-            </div> 
-        </div>
+                <a href="planning.php">Ritten planning</a>
+                <a href="magazijn.php">Voorraadbeheer</a>
+                <a href="artikelen.php">Artikelen</a>
+                <a href="Klant.php">Klanten</a>
+            </div>
+         </div>
+    </header> 
+    <div class="1">
 
     </div>
-</head>
+    <div class="2">
+
+    </div>
+    <div class="3">
+
+    </div>
+    <div class="4">
+        
+    </div>
+</body>
 </html>
 
 
 <!-- 
 Document Name: home.php
-Made by: Stijn Verbakel
+Made by: Anouk Grandia
 -->
