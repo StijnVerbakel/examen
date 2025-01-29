@@ -16,7 +16,7 @@ echo '<button onclick="window.location.href=\'index.php\'">Index</button>';
 include_once('Oop.php');
 
 
-$table = new Table("klant",true, true);
+$table = new Table("klant",false, true);
 
 ?>
 

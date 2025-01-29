@@ -195,7 +195,7 @@ class Table // Crud table + delete
         }
             
     }
-}
+}}
 
 class edit // edit data
 {
