@@ -1,8 +1,7 @@
 <?php
 include_once('Oop.php');
-echo '<button onclick="window.location.href=\'planning.php\'">Go to Inlog</button>';
-echo '<button onclick="window.location.href=\'./klant.php\'">Klant overzicht</button>';
 session_start();
+var_dump($_SESSION)
 ?>
 <!DOCTYPE html>
 <html lang="nl">
@@ -99,37 +98,86 @@ session_start();
             display: block;
         }
 
-    </style>
- <div class="menu">
-        <h1>Kringloop Centrum</h1>
-        <a href="#home">Home</a>
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2,400px);
+            grid-template-rows: repeat(2,200px);
+            gap: 20px;
+            margin: auto;
+            width: 50%;
+            margin-top: 5%;            
+        }
 
-        <!-- Dropdown Menu voor Ritten -->
+        .grid-item {
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+            color: black;
+            text-decoration: none;
+            border: 1px black solid;
+            border-radius: 10px;
+            transition: background-color 0.3s, transform 0.2s;
+        }   
+        
+        .grid-item:hover {
+            background-color: grey;
+            transform: scale(1.05);
+        }
+
+    </style>   
+</head>
+<body>
+    <header class="menu">
+        <h1>Kringloop Centrum</h1>
+        <a href="home.php">Home</a>
+
+        <!-- Dropdown menu voor ritten -->
         <div class="dropdown">
             <button class="dropbtn">Ritten</button>
             <div class="dropdown-content">
-                <a href="#rit1">Ritten planning</a>
+                <a href="planning.php">Ritten planning</a>
             </div>
         </div>
-        <a href="#contact">Voorraad</a>
-        <a href="#over">Beheer</a>
-        <!-- Dropdown Menu voor Admin -->
-        <div class="dropdown">
+
+        <!-- Dropdown menu voor admin -->
+         <div class="dropdown">
             <button class="dropbtn">Admin</button>
             <div class="dropdown-content">
-                <a href="#admin1">Ritten planning</a>
-                <a href="#admin2">Voorraadbeheer</a>
-                <a href="#admin3">Kledingstukken</a>
-                <a href="#admin3">Klanten</a>
-            </div> 
+                <a href="planning.php">Ritten planning</a>
+                <a href="magazijn.php">Voorraadbeheer</a>
+                <a href="artikelen.php">Artikelen</a>
+                <a href="Klant.php">Klanten</a>
+            </div>
+         </div>
+    </header> 
+    <div class="grid-container">
+        <div class="grid-item"> 
+            <h3>Ritten</h3>
+            <p>beschrijving</p>
+            <button><a href="planning.php">Ga naar ritten</a></button>
+        </div>
+        <div class="grid-item">
+            <h3>Voorraad beheer</h3>
+            <p>beschrijving</p>
+            <button><a href="magazijn.php">Ga naar voorraad beheer</a></button>
+        </div>
+        <div class="grid-item">
+            <h3>Artikelen</h3>
+            <p>beschrijving</p>
+            <button><a href="artikelen.php">Ga naar artikelen</a></button>
+        </div>
+        <div class="grid-item">
+            <h3>Klanten</h3>
+            <p>beschrijving</p>
+            <button><a href="Klant.php">ga naar klanten</a></button>
         </div>
 
     </div>
-</head>
+</body>
 </html>
 
 
 <!-- 
 Document Name: home.php
-Made by: Stijn Verbakel
+Made by: Anouk Grandia
 -->

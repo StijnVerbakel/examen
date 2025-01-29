@@ -130,8 +130,8 @@ class Table // Crud table + delete
        
      
         {
-
-            echo "<a href='add.php?table=". $table. "'>Add</a>";
+            echo "<br>";
+            echo "<a href='add.php?table=". $table. "'class='add'>Maak aan</a>";
             // Haal de kolomnamen op uit de database
             $stmt = $conn->prepare("DESCRIBE $table");
             $stmt->execute();
@@ -242,7 +242,9 @@ class edit // edit data
             
                 unset($_POST);
                 // Redirect to the admin panel
-                header("Location: ./home.php");
+                $previouslink = $_SESSION["previouslink"];
+                $url = strtok($previouslink, '?');
+                header("Location: ".$url."");
                 exit;
             } catch (PDOException $e) {
                 echo "Error: " . $e->getMessage();
@@ -264,38 +266,33 @@ class edit // edit data
         if ($editdata) 
         {
             echo '<form method="POST" action="./edit.php">';
-            foreach ($editdata as $column) {
-            
-                $key = $column['Field'];
-                if ($key == 'id') {
-                }else{
+            foreach ($editdata as $key => $value) {
                 echo '<div>';
                 echo '<label for="' . htmlspecialchars($key) . '">' . htmlspecialchars($key) . ':</label>';
-    
-                // Render different input types based on column name
-                if ($key === 'ProductText') {
-                    // Textarea for longer text
-                    echo '<textarea name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '"></textarea>';
-                } elseif ($key === 'ophalen_of_bezorgen') {
-                    // File input for photo (Note: Make sure to handle file uploads correctly)
-                    echo '<select name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
-                    echo '<option value="Ophalen">Ophalen</option>';
-                    echo '<option value="Bezorgen">Bezorgen</option>';
-                    echo '</select>';
-                                } elseif ($key === 'afspraak_op') {
-                    // File input for photo (Note: Make sure to handle file uploads correctly)
-                    echo '<input type="datetime-local" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
-                }
-            elseif ($key === 'ingeboekt_op') {
+               if ($key === 'ProductText') {
+                // Textarea for longer text
+                echo '<textarea name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '"></textarea>';
+            } elseif ($key === 'ophalen_of_bezorgen') {
+                // File input for photo (Note: Make sure to handle file uploads correctly)
+                echo '<select name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
+                echo '<option value="Ophalen">Ophalen</option>';
+                echo '<option value="Bezorgen">Bezorgen</option>';
+                echo '</select>';
+                            } elseif ($key === 'afspraak_op') {
                 // File input for photo (Note: Make sure to handle file uploads correctly)
                 echo '<input type="datetime-local" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
-            } else {
-                    // Standard text input
-                    echo '<input type="text" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
-                }
+            }
+        elseif ($key === 'ingeboekt_op' || $key === "afspraak_op") {
+            // File input for photo (Note: Make sure to handle file uploads correctly)
+            echo '<input type="datetime-local" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '"value="'.$key.'">';
+        } else {
+                // Standard text input
+                echo '<input type="text" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '"value="'.htmlspecialchars($value).'">';
+            }
                 echo '</div>';
-                }}
+            }
             echo '<button type="submit">Submit</button>';
+            
             echo '<button onclick="window.location.href=\'./crud.php\'">Admin</button>'; 
             echo '</form>';
         } 
@@ -437,6 +434,35 @@ class Add // Add data to table
     }
 }
 
+class pwf // wachtwoord vergeten 
+{
+    function __construct() 
+    {
+        $database = new Database(); // database connectie
+        $conn = $database->conn;
+        $username = $_GET["username"]; // info uit get
+        $password = $_GET["password"];
+
+        $passwordhash = password_hash($password,PASSWORD_DEFAULT); // password hash voor de set in database
+
+        $gCeck = $conn->prepare("SELECT gebruikersnaam From gebruiker WHERE gebruikersnaam LIKE '$username'"); // kijk of username er wel is
+        $gCeck->execute();
+        $gCeck->setFetchMode(PDO::FETCH_ASSOC);
+        $gCheckReturn = $gCeck->fetch();
+
+        if (!empty($gCheckReturn)) //als username bestaad voer het uit ander geef echo message uit
+        {
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $sql = "UPDATE gebruiker SET wachtwoord = '$passwordhash' WHERE gebruikersnaam = '$username';"; // update het nieuwe wachtwoord in de database
+            $conn->exec($sql);
+            header("location: index.php");
+        }
+        else 
+        {
+            echo "Geen geldig gebruikersnaam";
+        }
+    } 
+}
 ?>
 
 <!-- 
