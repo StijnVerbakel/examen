@@ -143,7 +143,7 @@ class Table // Crud table + delete
                $id = $_GET["menuid"];
                $sql = "DELETE FROM $table WHERE id = $id";
                $conn->exec($sql);
-               header("location: ./crud.php");
+               header("location: ".$_SERVER['REQUEST_URI'].".php");
             } 
             if ($cansee == false) {
                 header("location: home.php");
@@ -182,7 +182,7 @@ class Table // Crud table + delete
                             <td>
                                 <?php
                                 echo "<a href='./edit.php?menuid=" . $row['id'] . "&table=" . $table . "'>E</a>";
-                                echo "<a href='./crud.php?menuid=" . $row['id'] . "'>D</a>";
+                                echo "<a href='".$_SERVER['REQUEST_URI'].".php?menuid=" . $row['id'] . "'>D</a>";
                                 ?>
                             </td>
                             <?php } ?>
