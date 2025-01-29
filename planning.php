@@ -29,7 +29,7 @@ var_dump($_SESSION["rol"]);
 ?>
 
 <!-- 
-Document Name: crud.php
-Made by: Stijn Verbakel
+Document Name: planning.php
+Made by: sem van Haaften
 -->
 
