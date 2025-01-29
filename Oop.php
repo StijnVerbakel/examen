@@ -141,7 +141,7 @@ class Table // Crud table + delete
             {
                
                $id = $_GET["menuid"];
-               $sql = "DELETE FROM $table WHERE Id = $id";
+               $sql = "DELETE FROM $table WHERE id = $id";
                $conn->exec($sql);
                header("location: ./crud.php");
             } 
@@ -173,8 +173,8 @@ class Table // Crud table + delete
                             <?php } ?>
                             <td>
                                 <?php
-                                echo "<a href='./edit.php?menuid=" . $row['Id'] . "&table=" . $table . "'>E</a>";
-                                echo "<a href='./crud.php?menuid=" . $row['Id'] . "'>D</a>";
+                                echo "<a href='./edit.php?menuid=" . $row['id'] . "&table=" . $table . "'>E</a>";
+                                echo "<a href='./crud.php?menuid=" . $row['id'] . "'>D</a>";
                                 ?>
                             </td>
                         </tr>
