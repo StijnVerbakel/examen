@@ -9,21 +9,19 @@ body {
 table {
     width: 100%;
     border-collapse: collapse;
-    margin: 20px 0;
-    background-color: #fff;
-    border: 1px solid #ccc;
 }
-
 th, td {
-    text-align: left;
     padding: 10px;
-    
+    text-align: left;
+}
+tr {
+    border-bottom: 1px solid black;
+}
+tr:last-child {
+    border-bottom: none;
 }
 
-th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-}
+
 
 
 a {
