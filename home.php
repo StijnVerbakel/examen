@@ -97,6 +97,24 @@ session_start();
             display: block;
         }
 
+        .grid-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #007BFF;
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 10px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+        
+        .grid-item:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
     </style>
     
 </head>
@@ -124,17 +142,14 @@ session_start();
             </div>
          </div>
     </header> 
-    <div class="1">
-
-    </div>
-    <div class="2">
-
-    </div>
-    <div class="3">
-
-    </div>
-    <div class="4">
-        
+    <div class="grid-container" style="display: grid;
+    grid-template-columns: repeat(2, 200px);
+    grid-template-rows: repeat(2, 200px);
+    gap: 20px;">
+        <a href="pagina1.html" class="grid-item">Pagina 1</a>
+        <a href="pagina2.html" class="grid-item">Pagina 2</a>
+        <a href="pagina3.html" class="grid-item">Pagina 3</a>
+        <a href="pagina4.html" class="grid-item">Pagina 4</a>
     </div>
 </body>
 </html>
