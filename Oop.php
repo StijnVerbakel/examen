@@ -125,7 +125,7 @@ class Table // Crud table + delete
        
             $database = new Database();
             $conn = $database->conn;
-            session_start();
+            //session_start();
 
        
      
