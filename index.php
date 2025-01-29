@@ -11,7 +11,10 @@
             <input type="text" name="username" placeholder="Gebruikersnaam" class="input-field" required>
             <input type="password" name="password" placeholder="Wachtwoord" class="input-field" required>
             <button type="submit" class="btn">Inloggen</button>
-            <?php echo '<button onclick="window.location.href=\'./registreren.php\'">Registreren</button>'; ?>
+            <?php 
+                echo '<button onclick="window.location.href=\'./registreren.php\'">Registreren</button>'; 
+                echo '<button onclick="window.location.href=\'./pwf.php\'">Wachtwoord vergeten?</button>';
+            ?>
         </form>
     </div>  
 </body>

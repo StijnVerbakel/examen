@@ -433,6 +433,35 @@ class Add // Add data to table
     }
 }
 
+class pwf // wachtwoord vergeten 
+{
+    function __construct() 
+    {
+        $database = new Database(); // database connectie
+        $conn = $database->conn;
+        $username = $_GET["username"]; // info uit get
+        $password = $_GET["password"];
+
+        $passwordhash = password_hash($password,PASSWORD_DEFAULT); // password hash voor de set in database
+
+        $gCeck = $conn->prepare("SELECT gebruikersnaam From gebruiker WHERE gebruikersnaam LIKE '$username'"); // kijk of username er wel is
+        $gCeck->execute();
+        $gCeck->setFetchMode(PDO::FETCH_ASSOC);
+        $gCheckReturn = $gCeck->fetch();
+
+        if (!empty($gCheckReturn)) //als username bestaad voer het uit ander geef echo message uit
+        {
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $sql = "UPDATE gebruiker SET wachtwoord = '$passwordhash' WHERE gebruikersnaam = '$username';"; // update het nieuwe wachtwoord in de database
+            $conn->exec($sql);
+            header("location: index.php");
+        }
+        else 
+        {
+            echo "Geen geldig gebruikersnaam";
+        }
+    } 
+}
 ?>
 
 <!-- 
