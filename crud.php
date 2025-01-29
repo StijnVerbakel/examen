@@ -12,9 +12,9 @@
 </html>
 
 <?php 
-echo '<button onclick="window.location.href=\'index.php\'">Index</button>';
 include_once('Oop.php');
 
+echo '<button class="add" onclick="window.location.href=\'index.php\'">Index</button>';
 
 $table = new Table("klant",false, true);
 
