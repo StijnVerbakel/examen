@@ -35,8 +35,10 @@ $pwf = new pwf();
         <label for="confirm_password">Confirm Password:</label>
         <input type="password" id="confirm_password" name="confirm_password" required>
         <br>
-        <p id="error_message" style="color: red;"></p>
-        <button type="submit">Register</button>
+        <p id="error_message"></p>
+        <button type="submit">Wachtwoord aanpassen</button>
+        <?php echo '<button onclick="window.location.href=\'index.php\'">Terug naar inloggen</button>'; ?>
     </form>
+    
 </body>
 </html>
