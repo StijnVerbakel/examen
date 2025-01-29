@@ -264,22 +264,37 @@ class edit // edit data
         if ($editdata) 
         {
             echo '<form method="POST" action="./edit.php">';
-            foreach ($editdata as $key => $value) {
+            foreach ($editdata as $column) {
+            
+                $key = $column['Field'];
+                if ($key == 'id') {
+                }else{
                 echo '<div>';
                 echo '<label for="' . htmlspecialchars($key) . '">' . htmlspecialchars($key) . ':</label>';
+    
+                // Render different input types based on column name
                 if ($key === 'ProductText') {
                     // Textarea for longer text
-                    echo '<textarea name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">' . htmlspecialchars($value) . '</textarea>';
-                } elseif ($key === 'ProductFoto') {
-                    // File input for photo
-                    echo '<input type="file" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
-                    echo '<p>Current File: ' . htmlspecialchars($value) . '</p>';
-                } else {
+                    echo '<textarea name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '"></textarea>';
+                } elseif ($key === 'ophalen_of_bezorgen') {
+                    // File input for photo (Note: Make sure to handle file uploads correctly)
+                    echo '<select name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
+                    echo '<option value="Ophalen">Ophalen</option>';
+                    echo '<option value="Bezorgen">Bezorgen</option>';
+                    echo '</select>';
+                                } elseif ($key === 'afspraak_op') {
+                    // File input for photo (Note: Make sure to handle file uploads correctly)
+                    echo '<input type="datetime-local" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
+                }
+            elseif ($key === 'ingeboekt_op') {
+                // File input for photo (Note: Make sure to handle file uploads correctly)
+                echo '<input type="datetime-local" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
+            } else {
                     // Standard text input
-                    echo '<input type="text" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '" value="' . htmlspecialchars($value) . '">';
+                    echo '<input type="text" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
                 }
                 echo '</div>';
-            }
+                }}
             echo '<button type="submit">Submit</button>';
             echo '<button onclick="window.location.href=\'./crud.php\'">Admin</button>'; 
             echo '</form>';
