@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Gegenereerd op: 29 jan 2025 om 09:45
--- Serverversie: 10.4.24-MariaDB
--- PHP-versie: 8.1.6
+-- Gegenereerd op: 29 jan 2025 om 13:35
+-- Serverversie: 10.4.27-MariaDB
+-- PHP-versie: 8.2.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -32,17 +32,14 @@ CREATE TABLE `artikel` (
   `categorie_id` int(11) NOT NULL,
   `naam` varchar(255) NOT NULL,
   `prijs_ex_btw` decimal(10,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Gegevens worden geëxporteerd voor tabel `artikel`
 --
 
 INSERT INTO `artikel` (`id`, `categorie_id`, `naam`, `prijs_ex_btw`) VALUES
-(1, 1, 'Eco Laptop', '799.99'),
-(2, 2, 'Solar Charger', '49.99'),
-(3, 1, 'Eco Laptop', '799.99'),
-(4, 2, 'Solar Charger', '49.99');
+(5, 5, 'Comfy+', '200.00');
 
 -- --------------------------------------------------------
 
@@ -53,15 +50,27 @@ INSERT INTO `artikel` (`id`, `categorie_id`, `naam`, `prijs_ex_btw`) VALUES
 CREATE TABLE `categorie` (
   `id` int(11) NOT NULL,
   `categorie` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Gegevens worden geëxporteerd voor tabel `categorie`
 --
 
 INSERT INTO `categorie` (`id`, `categorie`) VALUES
-(1, 'Elektronica'),
-(2, 'Accessoires');
+(3, 'Kleding'),
+(4, 'Meubels'),
+(5, 'Bedden'),
+(6, 'Spiegels'),
+(7, 'Kapstokken'),
+(8, 'Garderobekasten'),
+(9, 'Schoenenkasten'),
+(10, 'Witgoed'),
+(11, 'Kledingkasten'),
+(12, 'Bruingoed'),
+(13, 'Grijsgoed'),
+(14, 'Niet toegestane artikelen'),
+(15, 'Glazen, Borden en Bestek'),
+(16, 'Boeken');
 
 -- --------------------------------------------------------
 
@@ -75,7 +84,7 @@ CREATE TABLE `gebruiker` (
   `wachtwoord` varchar(255) NOT NULL,
   `rollen` text NOT NULL,
   `is_geverifieerd` tinyint(1) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Gegevens worden geëxporteerd voor tabel `gebruiker`
@@ -100,7 +109,7 @@ CREATE TABLE `klant` (
   `plaats` varchar(255) NOT NULL,
   `telefoon` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Gegevens worden geëxporteerd voor tabel `klant`
@@ -123,15 +132,18 @@ CREATE TABLE `planning` (
   `kenteken` varchar(255) NOT NULL,
   `ophalen_of_bezorgen` enum('ophalen','bezorgen') NOT NULL,
   `afspraak_op` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Gegevens worden geëxporteerd voor tabel `planning`
 --
 
 INSERT INTO `planning` (`id`, `artikel_id`, `klant_id`, `kenteken`, `ophalen_of_bezorgen`, `afspraak_op`) VALUES
-(1, 1, 1, 'AB-123-CD', 'ophalen', '2024-02-01 10:00:00'),
-(2, 2, 2, 'EF-456-GH', 'bezorgen', '2024-02-02 15:00:00');
+(1, 5, 2, '2223', 'ophalen', '0000-00-00 00:00:00'),
+(6, 5, 1, '232323', 'bezorgen', '2025-01-29 11:41:33'),
+(12, 5, 2, 'qweqwe', 'bezorgen', '2025-01-14 00:00:00'),
+(13, 5, 2, 'qweqwe', 'ophalen', '2025-01-15 00:00:00'),
+(14, 5, 2, 'qweqwe', 'ophalen', '2025-01-15 12:58:00');
 
 -- --------------------------------------------------------
 
@@ -142,7 +154,7 @@ INSERT INTO `planning` (`id`, `artikel_id`, `klant_id`, `kenteken`, `ophalen_of_
 CREATE TABLE `status` (
   `id` int(11) NOT NULL,
   `status_naam` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Gegevens worden geëxporteerd voor tabel `status`
@@ -163,7 +175,7 @@ CREATE TABLE `verkopen` (
   `klant_id` int(11) NOT NULL,
   `artikel_id` int(11) NOT NULL,
   `verkocht_op` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -178,7 +190,16 @@ CREATE TABLE `voorraad` (
   `aantal` int(11) NOT NULL,
   `status_id` int(11) NOT NULL,
   `ingeboekt_op` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Gegevens worden geëxporteerd voor tabel `voorraad`
+--
+
+INSERT INTO `voorraad` (`id`, `artikel_id`, `locatie`, `aantal`, `status_id`, `ingeboekt_op`) VALUES
+(6, 5, 'qwe', 2, 1, '2025-01-01 13:15:00'),
+(7, 5, 'qwe', 2, 1, '2025-01-15 13:18:00'),
+(8, 5, 'qwe', 2, 1, '2025-01-02 13:19:00');
 
 --
 -- Indexen voor geëxporteerde tabellen
@@ -247,13 +268,13 @@ ALTER TABLE `voorraad`
 -- AUTO_INCREMENT voor een tabel `artikel`
 --
 ALTER TABLE `artikel`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT voor een tabel `categorie`
 --
 ALTER TABLE `categorie`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT voor een tabel `gebruiker`
@@ -271,7 +292,7 @@ ALTER TABLE `klant`
 -- AUTO_INCREMENT voor een tabel `planning`
 --
 ALTER TABLE `planning`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT voor een tabel `status`
@@ -289,7 +310,7 @@ ALTER TABLE `verkopen`
 -- AUTO_INCREMENT voor een tabel `voorraad`
 --
 ALTER TABLE `voorraad`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- Beperkingen voor geëxporteerde tabellen
@@ -305,8 +326,8 @@ ALTER TABLE `artikel`
 -- Beperkingen voor tabel `planning`
 --
 ALTER TABLE `planning`
-  ADD CONSTRAINT `planning_ibfk_1` FOREIGN KEY (`artikel_id`) REFERENCES `artikel` (`id`),
-  ADD CONSTRAINT `planning_ibfk_2` FOREIGN KEY (`klant_id`) REFERENCES `klant` (`id`);
+  ADD CONSTRAINT `planning_ibfk_2` FOREIGN KEY (`klant_id`) REFERENCES `klant` (`id`),
+  ADD CONSTRAINT `planning_ibfk_3` FOREIGN KEY (`artikel_id`) REFERENCES `artikel` (`id`);
 
 --
 -- Beperkingen voor tabel `verkopen`

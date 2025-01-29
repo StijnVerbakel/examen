@@ -434,6 +434,36 @@ class Add // Add data to table
     }
 }
 
+class pwf // wachtwoord vergeten 
+{
+    function __construct() 
+    {
+        $database = new Database();
+        $conn = $database->conn;
+        var_dump($_GET);
+        $username = $_GET["username"];
+        $password = $_GET["password"];
+
+        $passwordhash = password_hash($password,PASSWORD_DEFAULT);
+
+        $gCeck = $conn->prepare("SELECT gebruikersnaam From gebruiker WHERE gebruikersnaam LIKE '$username'"); // zoek oof er al een acount is op dit gmail
+        $gCeck->execute();
+        $gCeck->setFetchMode(PDO::FETCH_ASSOC);
+        $gCheckReturn = $gCeck->fetch();
+
+        if (!empty($gCheckReturn))
+        {
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $sql = "UPDATE gebruiker SET wachtwoord = '$passwordhash' WHERE gebruikersnaam = '$username';"; // voegt acount to in database
+            $conn->exec($sql);
+            header("location: index.php");
+        }
+        else 
+        {
+            echo "Geen geldig gebruikersnaam";
+        }
+    } 
+}
 ?>
 
 <!-- 
