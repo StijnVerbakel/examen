@@ -291,13 +291,13 @@ class add // edit data
         if(!empty($_POST)) // edit verwerken
         {
             try {
-                $tableEdit = $_SESSION["tableEdit"];
-                $idEdit = $_SESSION["idEdit"];
+                $tableEdit = $_SESSION["tableAdd"];
+                $idEdit = $_SESSION["idAdd"];
                 // Set PDO error mode
                 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             
                 // Start building the SQL query
-                $sql = "UPDATE $tableEdit SET ";
+                $sql = "$tableEdit SET ";
                 $params = [];
                 foreach ($_POST as $column => $value) {
                     // Skip if the column is empty
@@ -330,8 +330,8 @@ class add // edit data
 
         $table = $_GET["table"];
         $id = 1;
-        $_SESSION["tableEdit"] = $table;
-        $_SESSION["idEdit"] = $id;
+        $_SESSION["tableAdd"] = $table;
+        $_SESSION["idAdd"] = $id;
         
         $edit = $conn->prepare("SELECT * FROM $table WHERE id = :id");
         $edit->bindParam(':id', $id, PDO::PARAM_INT);
@@ -347,21 +347,20 @@ class add // edit data
                 echo '<label for="' . htmlspecialchars($key) . '">' . htmlspecialchars($key) . ':</label>';
                 if ($key === 'ProductText') {
                     // Textarea for longer text
-                    echo '<textarea name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">' . htmlspecialchars($value) . '</textarea>';
+                    echo '<textarea name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '"></textarea>';
                 } elseif ($key === 'ProductFoto') {
                     // File input for photo
                     echo '<input type="file" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
                     echo '<p>Current File: ' . htmlspecialchars($value) . '</p>';
                 } else {
-                    // Standard text input
-                    echo '<input type="text" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '" value="' . htmlspecialchars($value) . '">';
+                    // Standard text input without pre-filled value
+                    echo '<input type="text" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
                 }
                 echo '</div>';
             }
             echo '<button type="submit">Submit</button>';
-           
             echo '</form>';
-        } 
+        }
         else 
         {
             echo 'No data found.';
