@@ -56,7 +56,7 @@ class login //login backend (after the post)
                     $_SESSION["username"] = $username; // username session
                     $_SESSION["userId"] = $rolreturn["id"];   // userid session
                  
-                    header("location: index.php");
+                    header("location: home.php");
                 } 
                 else
                 {

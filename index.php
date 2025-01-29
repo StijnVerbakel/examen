@@ -1,11 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container">
+        <form action="" method="POST">
+            <input type="text" name="username" placeholder="Gebruikersnaam" class="input-field" required>
+            <input type="password" name="password" placeholder="Wachtwoord" class="input-field" required>
+            <button type="submit" class="btn">Inloggen</button>
+            <?php echo '<button onclick="window.location.href=\'./registreren.php\'">Registreren</button>'; ?>
+            <?php echo '<button onclick="window.location.href=\'./index.php\'">Index</button>'; ?>
+        </form>
+    </div>  
+</body>
+</html>
 <?php
 include_once('Oop.php');
-echo '<button onclick="window.location.href=\'Login.php\'">Go to Inlog</button>';
-echo '<button onclick="window.location.href=\'crud.php\'">Go to Crud</button>';
-session_start();
+$login = new login();
 ?>
 
 <!-- 
-Document Name: index.php.php
+Document Name: Index.php
 Made by: Stijn Verbakel
 -->
