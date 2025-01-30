@@ -12,6 +12,7 @@
 </html>
 
 <?php 
+
 echo '<button onclick="window.location.href=\'home.php\'">Home</button>';
 include_once('Oop.php');
 session_start();

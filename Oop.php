@@ -121,7 +121,7 @@ class Table // Crud table + delete
             if (empty($_SESSION)) {
                 header("Location:index.php");
             } 
-
+            
             echo "<a href='add.php?table=" . $table . "'class='add addbutton'>Maak aan</a>";
             // Haal de kolomnamen op uit de database
             $stmt = $conn->prepare("DESCRIBE $table");
@@ -173,8 +173,8 @@ class Table // Crud table + delete
                             <?php if ($readonly == false) { ?>
                                 <td>
                                     <?php
-                                    echo "<a href='./edit.php?menuid=" . $row['id'] . "&table=" . $table . "'>E</a>";
-                                    echo "<a href='" . $_SERVER['REQUEST_URI'] . "?menuid=" . $row['id'] . "'>D</a>";
+                                    echo "<a href='./edit.php?menuid=" . $row['id'] . "&table=" . $table . "'>Edit</a>";
+                                    echo "<a href='" . $_SERVER['REQUEST_URI'] . "?menuid=" . $row['id'] . "'>Delete</a>";
                                     ?>
                                 </td>
                             <?php } ?>
@@ -285,76 +285,82 @@ class edit // edit data
     }
 }
 
-class Add // Add data to table
-{
-    function __construct()
+    class Add // Add data to table
     {
-        // Initialize the database connection
-        $database = new Database();
-        $conn = $database->conn;
-        session_start();
+        function __construct()
+        {
+            // Initialize the database connection
+            $database = new Database();
+            $conn = $database->conn;
+            session_start();
 
-        // Handle the form submission
-        if (!empty($_POST)) {
-            $this->handleFormSubmit($conn);
+            // Handle the form submission
+            if (!empty($_POST)) {
+                $this->handleFormSubmit($conn);
+            }
+
+            // Display the form for adding data to the new row
+            $this->displayForm($conn);
+            
         }
 
-        // Display the form for adding data to the new row
-        $this->displayForm($conn);
-    }
+        // Function to handle form submission and insert data into the database
+        private function handleFormSubmit($conn)
+{
+    try {
+        // Get the table name from the GET parameter
+        $tableAdd = $_GET["table"];
 
-    // Function to handle form submission and insert data into the database
-    private function handleFormSubmit($conn)
-    {
-        try {
-            // Get the table name from the GET parameter
-            $tableAdd = $_GET["table"];
-
-            if (empty($tableAdd)) {
-                echo 'Table name is missing.';
-                exit;
-            }
-
-            // Set PDO error mode
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-            // Start building the SQL query for INSERT
-            $sql = "INSERT INTO $tableAdd (";
-            $sqlValues = "VALUES (";
-            $params = [];
-
-            // Loop through the POST data and prepare columns and values
-            foreach ($_POST as $column => $value) {
-                // Skip if the column is empty
-                if (!empty($value)) {
-                    $sql .= "$column, ";
-                    $sqlValues .= ":$column, ";
-                    $params[$column] = $value;
-                }
-            }
-
-            // Remove the trailing commas and spaces
-            $sql = rtrim($sql, ', ') . ') ';
-            $sqlValues = rtrim($sqlValues, ', ') . ')';
-
-            // Complete the final SQL query
-            $sql .= $sqlValues;
-
-            // Prepare and execute the statement
-            $stmt = $conn->prepare($sql);
-            $stmt->execute($params);
-            $previouslink = $_SESSION["previouslink"];
-            $url = strtok($previouslink, '?');
-
-            // Redirect to the admin panel after adding the data
-            header("Location: " . $url . "");
-
+        if (empty($tableAdd)) {
+            echo 'Table name is missing.';
             exit;
+        }
 
-        } catch (PDOException $e) {
+        // Set PDO error mode
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        // Start building the SQL query for INSERT
+        $sql = "INSERT INTO $tableAdd (";
+        $sqlValues = "VALUES (";
+        $params = [];
+
+        // Loop through the POST data and prepare columns and values
+        foreach ($_POST as $column => $value) {
+            // Skip if the column is empty
+            if (!empty($value)) {
+                $sql .= "$column, ";
+                $sqlValues .= ":$column, ";
+                $params[$column] = $value;
+            }
+        }
+
+        // Remove the trailing commas and spaces
+        $sql = rtrim($sql, ', ') . ') ';
+        $sqlValues = rtrim($sqlValues, ', ') . ')';
+
+        // Complete the final SQL query
+        $sql .= $sqlValues;
+
+        // Prepare and execute the statement
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($params);
+        $previouslink = $_SESSION["previouslink"];
+        $url = strtok($previouslink, '?');
+
+        // Redirect to the admin panel after adding the data
+        header("Location: " . $url . "");
+        exit;
+
+    } catch (PDOException $e) {
+        // Handle foreign key constraint violation
+        if ($e->getCode() == '23000' && strpos($e->getMessage(), 'foreign key constraint fails') !== false) {
+            echo "<p class='error'>Een van de id's die is ingevoerd is niet gevonden, weet je zeker dat het bestaat?</p>";
+        } else {
             echo "Error: " . $e->getMessage();
         }
     }
+}
+
 
     // Function to display the form for adding data to the table
     private function displayForm($conn)
