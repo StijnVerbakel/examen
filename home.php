@@ -168,7 +168,7 @@ var_dump($_SESSION)
         </div></a>';
 
         }elseif ( $_SESSION["rol"] === "directie" )  {
-i
+
         }elseif ( $_SESSION["rol"] === "winkelpersoneel" )  {
 
         }elseif ( $_SESSION["rol"] === "chauffeur" )  {
