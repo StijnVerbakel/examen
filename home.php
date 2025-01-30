@@ -81,6 +81,10 @@ if ($_SESSION["rol"] == null) {
             <a href="planning.php"><div class="grid-item"> 
                 <button class="NavButton">Planning bekijken</button>
             </div></a>';
+            echo '
+            <a href="ritten.php"><div class="grid-item"> 
+                <button class="NavButton">Ritten bekijken</button>
+            </div></a>';
         } 
         // Als de rol van de gebruiker 'winkelpersoneel' is
         elseif ($_SESSION["rol"] === "winkelpersoneel") {
@@ -118,6 +122,10 @@ if ($_SESSION["rol"] == null) {
             echo '
             <a href="magazijn.php"><div class="grid-item"> 
                 <button class="NavButton">Magazijn bekijken</button>
+            </div></a>';
+            echo '
+            <a href="ritten.php"><div class="grid-item"> 
+                <button class="NavButton">Ritten bekijken</button>
             </div></a>';
         } else {
             // Als de rol van de gebruiker niet gedefinieerd is, doen we niets

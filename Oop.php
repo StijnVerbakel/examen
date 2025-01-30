@@ -259,7 +259,7 @@ class edit
                     echo '<option value="Ophalen">Ophalen</option>';
                     echo '<option value="Bezorgen">Bezorgen</option>';
                     echo '</select>';
-                } elseif ($key === 'afspraak_op' || $key === 'ingeboekt_op' || $key === 'verkocht_op') {
+                } elseif ($key === 'afspraak_op' || $key === 'ingeboekt_op' || $key === 'verkocht_op'|| $key === 'vertek' || $key === 'aankomst') {
                     echo '<input type="datetime-local" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '" value="' . htmlspecialchars($value) . '">';
                 } else {
                     echo '<input type="text" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '" value="' . htmlspecialchars($value) . '">';
@@ -363,7 +363,7 @@ class Add
                     echo '<option value="Ophalen">Ophalen</option>';
                     echo '<option value="Bezorgen">Bezorgen</option>';
                     echo '</select>';
-                } elseif (in_array($key, ['ingeboekt_op', 'afspraak_op', 'verkocht_op'])) {
+                } elseif ($key === 'afspraak_op' || $key === 'ingeboekt_op' || $key === 'verkocht_op'|| $key === 'vertek' || $key === 'aankomst') {
                     echo '<input type="datetime-local" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
                 } else {
                     echo '<input type="text" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
