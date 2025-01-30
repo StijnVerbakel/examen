@@ -1,76 +1,79 @@
 <link rel="stylesheet" href="styles.css">
 <?php
-class Database //database connection 
+// Database connection class using PDO
+class Database
 {
-    private $db = "localhost";
-    private $dbname = "centrumduurzaam";
-    private $user = "root";
-    private $pass = "";
+    private $db = "localhost"; // Database host
+    private $dbname = "centrumduurzaam"; // Database name
+    private $user = "root"; // Database username
+    private $pass = ""; // Database password
     public $conn;
 
     function __construct()
     {
         try {
+            // Establish a database connection using PDO
             $connection = new PDO("mysql:host=$this->db;dbname=$this->dbname", $this->user, $this->pass);
             $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->conn = $connection;
 
         } catch (PDOException $e) {
-            echo "Connection failed: " . $e->getMessage();
+            echo "Connection failed: " . $e->getMessage(); // Display connection error
         }
     }
 }
 
-class login //login backend (after the post)
+// Login class to handle user authentication
+class login
 {
     function __construct()
     {
-        if (!empty($_POST['username'])) {
+        if (!empty($_POST['username'])) { // Check if username is provided
             $username = $_POST['username'];
             $password = $_POST['password'];
             $database = new Database();
             $conn = $database->conn;
 
-            $rol = $conn->prepare("SELECT rollen,id,gebruikersnaam FROM gebruiker WHERE Gebruikersnaam LIKE '%$username%'"); // haal rol van gebruiker uit database
+            // Retrieve user role and ID based on username
+            $rol = $conn->prepare("SELECT rollen,id,gebruikersnaam FROM gebruiker WHERE Gebruikersnaam LIKE '%$username%'");
             $rol->execute();
             $rol->setFetchMode(PDO::FETCH_ASSOC);
             $rolreturn = $rol->fetch();
 
-            if (!empty($rolreturn["gebruikersnaam"])) { //bestaat email?
+            if (!empty($rolreturn["gebruikersnaam"])) { // Check if user exists
 
-                $ps = $conn->prepare("SELECT wachtwoord FROM gebruiker WHERE gebruikersnaam = '$username'"); // haal het juiste password uit de database
+                // Retrieve hashed password from database
+                $ps = $conn->prepare("SELECT wachtwoord FROM gebruiker WHERE gebruikersnaam = '$username'");
                 $ps->execute();
                 $ps->setFetchMode(PDO::FETCH_ASSOC);
                 $psreturn = $ps->fetch();
                 $psreturn = ($psreturn["wachtwoord"]);
 
-                if (password_verify($password, $psreturn)) // check password correct
-                { // email en wachtwoord overeen?
+                if (password_verify($password, $psreturn)) // Verify password
+                {
                     echo "<br> ingeloged";
-                    unset($_POST); // leeg $_Post
+                    unset($_POST); // Clear POST data
                     session_start();
-                    $_SESSION["rol"] = $rolreturn['rollen']; // rol session
-                    $_SESSION["username"] = $username; // username session
-                    $_SESSION["userId"] = $rolreturn["id"];   // userid session
+                    $_SESSION["rol"] = $rolreturn['rollen']; // Store role in session
+                    $_SESSION["username"] = $username; // Store username in session
+                    $_SESSION["userId"] = $rolreturn["id"];   // Store user ID in session
 
-                    header("location: home.php");
+                    header("location: home.php"); // Redirect to home page
                 } else {
-                    echo "<br> inloggen gefaalt";
-
+                    echo "<br> inloggen gefaalt"; // Login failed
                 }
             } else {
-                echo "incorrecte gegevens";
-
+                echo "incorrecte gegevens"; // Incorrect credentials
             }
         }
     }
 }
 
-class registreren //registreren van een nieuw persoon/gebruiker in het systeem
+// Class to handle user registration
+class registreren
 {
     function __construct()
     {
-
         if (!empty($_POST['Rol'])) {
 
             $Rol = $_POST['Rol'];
@@ -79,28 +82,23 @@ class registreren //registreren van een nieuw persoon/gebruiker in het systeem
             $database = new Database();
             $conn = $database->conn;
 
+            // Hash the password before storing it
             $passwordhash = password_hash($Wachtwoord, PASSWORD_DEFAULT);
-            $gmailC = $conn->prepare("SELECT gebruikersnaam FROM gebruiker WHERE gebruikersnaam LIKE '$GebruikersNaam'"); // zoek of er al een account is met dit emailadres
+
+            // Check if username already exists
+            $gmailC = $conn->prepare("SELECT gebruikersnaam FROM gebruiker WHERE gebruikersnaam LIKE '$GebruikersNaam'");
             $gmailC->execute();
             $gmailC->setFetchMode(PDO::FETCH_ASSOC);
             $gmailreturn = $gmailC->fetch();
 
-            // maak account
-            if (empty($gmailreturn)) {
+            if (empty($gmailreturn)) { // If username is available
                 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                $sql = "INSERT INTO gebruiker (rollen, gebruikersnaam, wachtwoord) VALUES ('$Rol', '$GebruikersNaam', '$passwordhash')"; // voegt account to in database
-
+                $sql = "INSERT INTO gebruiker (rollen, gebruikersnaam, wachtwoord) VALUES ('$Rol', '$GebruikersNaam', '$passwordhash')";
 
                 $conn->exec($sql);
                 echo "New record created successfully";
-
-                // header("location: index.php");            
-
-
-
             } else {
                 echo "op dit gmail is al een account aangemaakt ";
-
             }
             unset($_POST);
             $conn = null;
@@ -108,132 +106,126 @@ class registreren //registreren van een nieuw persoon/gebruiker in het systeem
     }
 }
 
-class Table // Crud table + delete
+// Class to handle CRUD operations on tables
+class Table
 {
-
     function __construct($table, $readonly, $cansee)
     {
-
         $database = new Database();
         $conn = $database->conn;
-        //session_start();
-        {
-            if (empty($_SESSION)) {
-                header("Location:index.php");
-            } 
-            
-            echo "<a href='add.php?table=" . $table . "'class='add addbutton'>Maak aan</a>";
-            // Haal de kolomnamen op uit de database
-            $stmt = $conn->prepare("DESCRIBE $table");
-            $stmt->execute();
-            $columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
-            $_SESSION["previouslink"] = $_SERVER['REQUEST_URI'];
-            $_SESSION["table"] = $table;
-            if (!empty($_GET)) {
-
-                $id = $_GET["menuid"];
-                $sql = "DELETE FROM $table WHERE id = $id";
-                $conn->exec($sql);
-                $url = strtok($_SERVER['REQUEST_URI'], '?');
-
-                header("location: " . $url . "");
-            }
-            if ($cansee == false) {
-                header("location: home.php");
-
-            }
-            ?>
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <?php foreach ($columns as $column) { ?>
-                            <th><?php echo htmlspecialchars($column); ?></th>
-                        <?php }
-                        if ($readonly == false) {
-                            ?>
-
-                            <th>Acties</th>
-                        <?php } ?>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    <?php
-                    // Haal de gegevens op uit de tabel
-                    $stmt = $conn->prepare("SELECT * FROM $table");
-                    $stmt->execute();
-                    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-                    foreach ($data as $row) {
-                        ?>
-                        <tr>
-                            <?php foreach ($columns as $column) { ?>
-                                <td><?php echo htmlspecialchars($row[$column]); ?></td>
-                            <?php } ?>
-                            <?php if ($readonly == false) { ?>
-                                <td>
-                                    <?php
-                                    echo "<a href='./edit.php?menuid=" . $row['id'] . "&table=" . $table . "'>Edit</a>";
-                                    echo "<a href='" . $_SERVER['REQUEST_URI'] . "?menuid=" . $row['id'] . "'>Delete</a>";
-                                    ?>
-                                </td>
-                            <?php } ?>
-                        </tr>
-                        <?php
-                    }
-                    ?>
-                </tbody>
-            </table>
-            <?php
-
+        if (empty($_SESSION)) {
+            header("Location:index.php");
         }
 
+        echo "<a href='add.php?table=" . $table . "'class='add addbutton'>Maak aan</a>";
+
+        // Retrieve table columns
+        $stmt = $conn->prepare("DESCRIBE $table");
+        $stmt->execute();
+        $columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        $_SESSION["previouslink"] = $_SERVER['REQUEST_URI'];
+        $_SESSION["table"] = $table;
+
+        if (!empty($_GET)) {
+            $id = $_GET["menuid"];
+            $sql = "DELETE FROM $table WHERE id = $id";
+            $conn->exec($sql);
+            $url = strtok($_SERVER['REQUEST_URI'], '?');
+            header("location: " . $url . "");
+        }
+
+        if ($cansee == false) {
+            header("location: home.php");
+        }
+
+        ?>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <?php foreach ($columns as $column) { ?>
+                        <th><?php echo htmlspecialchars($column); ?></th>
+                    <?php }
+                    if ($readonly == false) { ?>
+                        <th>Acties</th>
+                    <?php } ?>
+                </tr>
+            </thead>
+
+            <tbody>
+                <?php
+                // Fetch data from table
+                $stmt = $conn->prepare("SELECT * FROM $table");
+                $stmt->execute();
+                $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                foreach ($data as $row) { ?>
+                    <tr>
+                        <?php foreach ($columns as $column) { ?>
+                            <td><?php echo htmlspecialchars($row[$column]); ?></td>
+                        <?php } ?>
+                        <?php if ($readonly == false) { ?>
+                            <td>
+                                <?php
+                                echo "<a href='./edit.php?menuid=" . $row['id'] . "&table=" . $table . "'>Edit</a>";
+                                echo "<a href='" . $_SERVER['REQUEST_URI'] . "?menuid=" . $row['id'] . "'>Delete</a>";
+                                ?>
+                            </td>
+                        <?php } ?>
+                    </tr>
+                    <?php
+                }
+                ?>
+            </tbody>
+        </table>
+        <?php
     }
 }
 
-class edit // edit data
+// Klasse voor het bewerken van gegevens in de database
+class edit
 {
     function __construct()
     {
+        // Maak verbinding met de database
         $database = new Database();
         $conn = $database->conn;
         session_start();
 
-        if (!empty($_POST)) // edit verwerken waarneer post is ingevult
-        {
+        // Controleer of er een POST-verzoek is ontvangen (bewerkgegevens verwerken)
+        if (!empty($_POST)) {
             try {
                 $tableEdit = $_SESSION["tableEdit"];
                 $idEdit = $_SESSION["idEdit"];
-                // Set PDO error mode
+
+                // Stel de PDO foutmodus in
                 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-
-                $sql = "UPDATE $tableEdit SET "; // maak de query
+                $sql = "UPDATE $tableEdit SET "; // Start de query voor het bijwerken van gegevens
                 $params = [];
-                foreach ($_POST as $column => $value) { // 
-                    if (!empty($value)) { // als empty sla over anders voeg toe aan query
+
+                // Loop door de POST-gegevens en voeg kolommen toe aan de query
+                foreach ($_POST as $column => $value) {
+                    if (!empty($value)) { // Sla lege waarden over
                         $sql .= "$column = :$column, ";
                         $params[$column] = $value;
                     }
                 }
 
-                $sql = rtrim($sql, ', '); // trim sql
-
-
-                $sql .= " WHERE id = :id"; // voeg where toe aan sql query
+                // Verwijder de laatste komma uit de query
+                $sql = rtrim($sql, ', ');
+                $sql .= " WHERE id = :id"; // Voeg de WHERE-clausule toe
                 $params['id'] = $idEdit;
 
-
                 $stmt = $conn->prepare($sql);
-                $stmt->execute($params); // voer de query uit
+                $stmt->execute($params); // Voer de query uit
 
-                unset($_POST); // leeg post
+                unset($_POST); // Leeg de POST-gegevens
                 $previouslink = $_SESSION["previouslink"];
                 $url = strtok($previouslink, '?');
-                header("Location: " . $url . ""); // ga terug naar last link
+                header("Location: " . $url); // Ga terug naar de vorige pagina
                 exit;
             } catch (PDOException $e) {
-                // Handle foreign key constraint violation
+                // Behandel buitenlandse sleutelconstraintfouten
                 if ($e->getCode() == '23000' && strpos($e->getMessage(), 'foreign key constraint fails') !== false) {
                     echo "<p class='error'>Een van de id's die is ingevoerd is niet gevonden, weet je zeker dat het bestaat?</p>";
                     exit;
@@ -243,222 +235,181 @@ class edit // edit data
             }
         }
 
-
         $table = $_GET["table"];
         $id = $_GET["menuid"];
         $_SESSION["tableEdit"] = $table;
         $_SESSION["idEdit"] = $id;
 
-        $edit = $conn->prepare("SELECT * FROM $table WHERE Id = :id"); // selecteer op basis van het id en de table de row om de bewerken
+        // Selecteer de rij op basis van het id en de tabel
+        $edit = $conn->prepare("SELECT * FROM $table WHERE Id = :id");
         $edit->bindParam(':id', $id, PDO::PARAM_INT);
         $edit->execute();
         $edit->setFetchMode(PDO::FETCH_ASSOC);
         $editdata = $edit->fetch();
 
-        if ($editdata)  //maak de form
-        {
+        if ($editdata) {  // Genereer een formulier om gegevens te bewerken
             echo '<form method="POST" action="./edit.php">';
             foreach ($editdata as $key => $value) {
                 echo '<div>';
                 echo '<label for="' . htmlspecialchars($key) . '">' . htmlspecialchars($key) . ':</label>';
                 if ($key === 'ProductText') {
-                    // Textarea for longer text
                     echo '<textarea name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '"></textarea>';
                 } elseif ($key === 'ophalen_of_bezorgen') {
-                    // File input for photo (Note: Make sure to handle file uploads correctly)
                     echo '<select name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
                     echo '<option value="Ophalen">Ophalen</option>';
                     echo '<option value="Bezorgen">Bezorgen</option>';
                     echo '</select>';
-                } elseif ($key === 'afspraak_op') {
-                    // File input for photo (Note: Make sure to handle file uploads correctly)
-                    echo '<input type="datetime-local" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
-                } elseif ($key === 'ingeboekt_op' || $key === "afspraak_op" || $key === "verkocht_op") {
-                    // File input for photo (Note: Make sure to handle file uploads correctly)
-                    echo '<input type="datetime-local" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '"value="' . $key . '">';
+                } elseif ($key === 'afspraak_op' || $key === 'ingeboekt_op' || $key === 'verkocht_op') {
+                    echo '<input type="datetime-local" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '" value="' . htmlspecialchars($value) . '">';
                 } else {
-                    // Standard text input
-                    echo '<input type="text" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '"value="' . htmlspecialchars($value) . '">';
+                    echo '<input type="text" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '" value="' . htmlspecialchars($value) . '">';
                 }
                 echo '</div>';
             }
             echo '<button type="submit">Submit</button>';
-
             echo '</form>';
         } else {
-            echo 'No data found.'; // catch
+            echo 'Geen gegevens gevonden.';
         }
     }
 }
 
-    class Add // Add data to table
-    {
-        function __construct()
-        {
-            // Initialize the database connection
-            $database = new Database();
-            $conn = $database->conn;
-            session_start();
-
-            // Handle the form submission
-            if (!empty($_POST)) {
-                $this->handleFormSubmit($conn);
-            }
-
-            // Display the form for adding data to the new row
-            $this->displayForm($conn);
-            
-        }
-
-        // Function to handle form submission and insert data into the database
-        private function handleFormSubmit($conn)
+// Klasse om nieuwe gegevens toe te voegen aan een tabel
+class Add
 {
-    try {
-        // Get the table name from the GET parameter
-        $tableAdd = $_GET["table"];
+    function __construct()
+    {
+        $database = new Database();
+        $conn = $database->conn;
+        session_start();
 
-        if (empty($tableAdd)) {
-            echo 'Table name is missing.';
-            exit;
+        if (!empty($_POST)) {
+            $this->handleFormSubmit($conn); // Verwerk formulierinzending
         }
 
-        // Set PDO error mode
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->displayForm($conn); // Toon het formulier om gegevens toe te voegen
+    }
 
-        // Start building the SQL query for INSERT
-        $sql = "INSERT INTO $tableAdd (";
-        $sqlValues = "VALUES (";
-        $params = [];
+    // Verwerk de formulierinzending en voeg gegevens toe aan de database
+    private function handleFormSubmit($conn)
+    {
+        try {
+            $tableAdd = $_GET["table"];
 
-        // Loop through the POST data and prepare columns and values
-        foreach ($_POST as $column => $value) {
-            // Skip if the column is empty
-            if (!empty($value)) {
-                $sql .= "$column, ";
-                $sqlValues .= ":$column, ";
-                $params[$column] = $value;
+            if (empty($tableAdd)) {
+                echo 'Tabelnaam ontbreekt.';
+                exit;
+            }
+
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $sql = "INSERT INTO $tableAdd (";
+            $sqlValues = "VALUES (";
+            $params = [];
+
+            foreach ($_POST as $column => $value) {
+                if (!empty($value)) {
+                    $sql .= "$column, ";
+                    $sqlValues .= ":$column, ";
+                    $params[$column] = $value;
+                }
+            }
+
+            $sql = rtrim($sql, ', ') . ') ';
+            $sqlValues = rtrim($sqlValues, ', ') . ')';
+            $sql .= $sqlValues;
+
+            $stmt = $conn->prepare($sql);
+            $stmt->execute($params);
+            $previouslink = $_SESSION["previouslink"];
+            $url = strtok($previouslink, '?');
+            header("Location: " . $url);
+            exit;
+        } catch (PDOException $e) {
+            if ($e->getCode() == '23000' && strpos($e->getMessage(), 'foreign key constraint fails') !== false) {
+                echo "<p class='error'>Een van de id's die is ingevoerd is niet gevonden, weet je zeker dat het bestaat?</p>";
+            } else {
+                echo "Error: " . $e->getMessage();
             }
         }
-
-        // Remove the trailing commas and spaces
-        $sql = rtrim($sql, ', ') . ') ';
-        $sqlValues = rtrim($sqlValues, ', ') . ')';
-
-        // Complete the final SQL query
-        $sql .= $sqlValues;
-
-        // Prepare and execute the statement
-        $stmt = $conn->prepare($sql);
-        $stmt->execute($params);
-        $previouslink = $_SESSION["previouslink"];
-        $url = strtok($previouslink, '?');
-
-        // Redirect to the admin panel after adding the data
-        header("Location: " . $url . "");
-        exit;
-
-    } catch (PDOException $e) {
-        // Handle foreign key constraint violation
-        if ($e->getCode() == '23000' && strpos($e->getMessage(), 'foreign key constraint fails') !== false) {
-            echo "<p class='error'>Een van de id's die is ingevoerd is niet gevonden, weet je zeker dat het bestaat?</p>";
-        } else {
-            echo "Error: " . $e->getMessage();
-        }
     }
-}
 
-
-    // Function to display the form for adding data to the table
+    // Toon het formulier voor het toevoegen van gegevens
     private function displayForm($conn)
     {
-        // Get the table name from the GET parameter
         $tableAdd = $_GET["table"];
         $_SESSION["tableAdd"] = $tableAdd;
         $previouslink = $_SESSION["previouslink"];
 
-        // Fetch the table column names
         $columns = $conn->prepare("DESCRIBE $tableAdd");
         $columns->execute();
 
-        // Debugging: Check if columns are returned
         if ($columns->rowCount() > 0) {
             $columnsData = $columns->fetchAll(PDO::FETCH_ASSOC);
         } else {
-            echo "No columns found for table $tableAdd.";
+            echo "Geen kolommen gevonden voor tabel $tableAdd.";
             exit;
         }
 
-        // Start the form
-        echo '<form method="POST" action="./add.php?table=' . $tableAdd . '">'; // Change action to match the correct script
+        echo '<form method="POST" action="./add.php?table=' . $tableAdd . '">';
         foreach ($columnsData as $column) {
-
             $key = $column['Field'];
-            if ($key == 'id') {
-            } else {
+            if ($key !== 'id') {
                 echo '<div>';
                 echo '<label for="' . htmlspecialchars($key) . '">' . htmlspecialchars($key) . ':</label>';
-
-                // Render different input types based on column name
                 if ($key === 'ProductText') {
-                    // Textarea for longer text
                     echo '<textarea name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '"></textarea>';
                 } elseif ($key === 'ophalen_of_bezorgen') {
-                    // File input for photo (Note: Make sure to handle file uploads correctly)
                     echo '<select name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
                     echo '<option value="Ophalen">Ophalen</option>';
                     echo '<option value="Bezorgen">Bezorgen</option>';
                     echo '</select>';
-                } elseif ($key === 'ingeboekt_op' || $key === "afspraak_op" || $key === "verkocht_op") {
-                    // File input for photo (Note: Make sure to handle file uploads correctly)
-                    echo '<input type="datetime-local" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
-                } elseif ($key === 'ingeboekt_op') {
-                    // File input for photo (Note: Make sure to handle file uploads correctly)
+                } elseif (in_array($key, ['ingeboekt_op', 'afspraak_op', 'verkocht_op'])) {
                     echo '<input type="datetime-local" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
                 } else {
-                    // Standard text input
                     echo '<input type="text" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
                 }
                 echo '</div>';
             }
         }
-
-        // Submit button for the form
         echo '<button type="submit">Submit</button>';
         echo '</form>';
     }
 }
 
-class pwf // wachtwoord vergeten 
+// Klasse voor wachtwoord vergeten functionaliteit
+class pwf
 {
     function __construct()
     {
-        $database = new Database(); // database connectie
+        $database = new Database();
         $conn = $database->conn;
         if ($_POST) {
-        $username = $_POST["username"]; // info uit get
-        $password = $_POST["password"];
+            $username = $_POST["username"];
+            $password = $_POST["password"];
 
-        $passwordhash = password_hash($password, PASSWORD_DEFAULT); // password hash voor de set in database
+            // Hash het wachtwoord voordat het wordt opgeslagen
+            $passwordhash = password_hash($password, PASSWORD_DEFAULT);
 
-        $gCeck = $conn->prepare("SELECT gebruikersnaam FROM gebruiker WHERE gebruikersnaam LIKE '$username'"); // kijk of username er wel is
-        $gCeck->execute();
-        $gCeck->setFetchMode(PDO::FETCH_ASSOC);
-        $gCheckReturn = $gCeck->fetch();
+            // Controleer of de gebruikersnaam bestaat in de database
+            $gCeck = $conn->prepare("SELECT gebruikersnaam FROM gebruiker WHERE gebruikersnaam LIKE '$username'");
+            $gCeck->execute();
+            $gCeck->setFetchMode(PDO::FETCH_ASSOC);
+            $gCheckReturn = $gCeck->fetch();
 
-        if (!empty($gCheckReturn)) //als username bestaad voer het uit ander geef echo message uit
-        {
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $sql = "UPDATE gebruiker SET wachtwoord = '$passwordhash' WHERE gebruikersnaam = '$username';"; // update het nieuwe wachtwoord in de database
-            $conn->exec($sql);
-            header("location: index.php");
-        } else {
-            echo "Geen geldig gebruikersnaam";
+            if (!empty($gCheckReturn)) {
+                $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                $sql = "UPDATE gebruiker SET wachtwoord = '$passwordhash' WHERE gebruikersnaam = '$username';";
+                $conn->exec($sql);
+                header("location: index.php");
+            } else {
+                echo "Geen geldig gebruikersnaam";
+            }
         }
-    }}
+    }
 }
 ?>
 
 <!-- 
-Document Name: Oop.php
-Made by: Anouk Grandia, Lauro El-Bagdadi, Stijn Verbakel en Sem van Haaften
+Document Naam: Oop.php
+Gemaakt door: Anouk Grandia, Lauro El-Bagdadi, Stijn Verbakel en Sem van Haaften
 -->
