@@ -13,6 +13,8 @@
 
 <?php 
 echo '<button onclick="window.location.href=\'home.php\'">Home</button>';
+                echo '<button onclick="window.location.href=\'./registreren.php\'">voeg user toe</button>'; 
+
 include_once('Oop.php');
 session_start();
 

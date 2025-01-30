@@ -97,6 +97,7 @@ class registreren
 
                 $conn->exec($sql);
                 echo "New record created successfully";
+                header("Location:gebruiker.php");
             } else {
                 echo "op dit gmail is al een account aangemaakt ";
             }
@@ -117,7 +118,6 @@ class Table
             header("Location:index.php");
         }
 
-        echo "<a href='add.php?table=" . $table . "'class='add addbutton'>Maak aan</a>";
 
         // Retrieve table columns
         $stmt = $conn->prepare("DESCRIBE $table");
@@ -125,7 +125,10 @@ class Table
         $columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
         $_SESSION["previouslink"] = $_SERVER['REQUEST_URI'];
         $_SESSION["table"] = $table;
-
+        
+        if ((string)$_SESSION["table"]!="gebruiker"){
+        echo "<a href='add.php?table=" . $table . "'class='add addbutton'>Maak aan</a>";
+        }
         if (!empty($_GET)) {
             $id = $_GET["menuid"];
             $sql = "DELETE FROM $table WHERE id = $id";
