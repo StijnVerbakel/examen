@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Gegenereerd op: 30 jan 2025 om 13:05
+-- Gegenereerd op: 30 jan 2025 om 15:39
 -- Serverversie: 10.4.27-MariaDB
 -- PHP-versie: 8.2.0
 
@@ -39,7 +39,8 @@ CREATE TABLE `artikel` (
 --
 
 INSERT INTO `artikel` (`id`, `categorie_id`, `naam`, `prijs_ex_btw`) VALUES
-(5, 5, 'Comfy+', '200.00');
+(5, 5, 'Comfy+', '200.00'),
+(6, 5, 'comfy-', '300.00');
 
 -- --------------------------------------------------------
 
@@ -95,7 +96,10 @@ INSERT INTO `gebruiker` (`id`, `gebruikersnaam`, `wachtwoord`, `rollen`, `is_gev
 (4, 'jan bos', '$2y$10$SfSgr.z8A4gIk8CPXTXB9eXzCxtG292iThVXRYr89g2IYzlp3bMZ6', 'magazijn', 0),
 (5, 'johan belg', '$2y$10$ZI6BGqUeqzT98/WcuNeauezSv/1i3ll2THVr0zGInR763USFL8pGq', 'winkelpersoneel', 0),
 (6, 'barry bos', '$2y$10$NqH06FvFtzT7gf3RE6IH7O6242GF3bLAxhvxH1bUwCHxMmVG3gBlK', 'chauffeur', 0),
-(7, 'zembo', '$2y$10$xGmOf0fWY3OTCdXy.agHm.NLKlI6EtmTad70508bNOG/P2nNml5MK', 'winkelpersoneel', 0);
+(9, 'qwe', '$2y$10$IA.uzlJ0KQ9VCOOdhRuALuY2fo0l/PpINBEY/TGvYYnze2W4qWknm', 'winkelpersoneel', 0),
+(10, 'qweqwe', '$2y$10$hzmDw3/wPU/ajDmsLBcj9eOh1FMLx3fDlAcAR5RGvStHX.XeLh2Re', 'directie', 0),
+(11, 'Lauro', '$2y$10$tD9xtAmYYLE3RNHgncC3Ru9kdS7q6mvVsYfU/tfVQtHKzghBgPOr6', 'directie', 0),
+(12, 'zombi', '$2y$10$p2TZ0OiYYT6bI9w6s1XQC.RgDLBZUVkcODM/Pdf/zppFxnbZaWIgW', 'directie', 0);
 
 -- --------------------------------------------------------
 
@@ -304,7 +308,7 @@ ALTER TABLE `voorraad`
 -- AUTO_INCREMENT voor een tabel `artikel`
 --
 ALTER TABLE `artikel`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT voor een tabel `categorie`
@@ -316,7 +320,7 @@ ALTER TABLE `categorie`
 -- AUTO_INCREMENT voor een tabel `gebruiker`
 --
 ALTER TABLE `gebruiker`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT voor een tabel `klant`
