@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Gegenereerd op: 29 jan 2025 om 13:35
+-- Gegenereerd op: 30 jan 2025 om 13:05
 -- Serverversie: 10.4.27-MariaDB
 -- PHP-versie: 8.2.0
 
@@ -92,9 +92,10 @@ CREATE TABLE `gebruiker` (
 
 INSERT INTO `gebruiker` (`id`, `gebruikersnaam`, `wachtwoord`, `rollen`, `is_geverifieerd`) VALUES
 (3, 'anna bos', '$2y$10$FpauRTZNsVm/UcotoWCrwOtwLCPFCDoq3usu.dM.uVqPSLZ2kqevC', 'directie', 0),
-(4, 'jan bos', '$2y$10$TkTtuDPyCYrgIZjt4fVMt.6BaDwo1OJrVSYhgdRIikfq1ay7Qkza2', 'magazijn', 0),
+(4, 'jan bos', '$2y$10$SfSgr.z8A4gIk8CPXTXB9eXzCxtG292iThVXRYr89g2IYzlp3bMZ6', 'magazijn', 0),
 (5, 'johan belg', '$2y$10$ZI6BGqUeqzT98/WcuNeauezSv/1i3ll2THVr0zGInR763USFL8pGq', 'winkelpersoneel', 0),
-(6, 'barry bos', '$2y$10$NqH06FvFtzT7gf3RE6IH7O6242GF3bLAxhvxH1bUwCHxMmVG3gBlK', 'chauffeur', 0);
+(6, 'barry bos', '$2y$10$NqH06FvFtzT7gf3RE6IH7O6242GF3bLAxhvxH1bUwCHxMmVG3gBlK', 'chauffeur', 0),
+(7, 'zembo', '$2y$10$xGmOf0fWY3OTCdXy.agHm.NLKlI6EtmTad70508bNOG/P2nNml5MK', 'winkelpersoneel', 0);
 
 -- --------------------------------------------------------
 
@@ -139,11 +140,31 @@ CREATE TABLE `planning` (
 --
 
 INSERT INTO `planning` (`id`, `artikel_id`, `klant_id`, `kenteken`, `ophalen_of_bezorgen`, `afspraak_op`) VALUES
-(1, 5, 2, '2223', 'ophalen', '0000-00-00 00:00:00'),
+(1, 5, 1, '2223', 'ophalen', '2025-01-15 13:40:00'),
 (6, 5, 1, '232323', 'bezorgen', '2025-01-29 11:41:33'),
-(12, 5, 2, 'qweqwe', 'bezorgen', '2025-01-14 00:00:00'),
-(13, 5, 2, 'qweqwe', 'ophalen', '2025-01-15 00:00:00'),
-(14, 5, 2, 'qweqwe', 'ophalen', '2025-01-15 12:58:00');
+(14, 5, 2, 'qweqwe', 'ophalen', '2025-01-15 12:58:00'),
+(25, 5, 2, 'qweqwe', 'ophalen', '2025-01-08 09:45:00'),
+(27, 5, 1, 'qweqwe', 'ophalen', '2025-01-01 10:02:00');
+
+-- --------------------------------------------------------
+
+--
+-- Tabelstructuur voor tabel `ritten`
+--
+
+CREATE TABLE `ritten` (
+  `id` int(11) NOT NULL,
+  `planning_id` int(11) NOT NULL,
+  `vertek` datetime(6) NOT NULL,
+  `aankomst` datetime(6) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Gegevens worden geëxporteerd voor tabel `ritten`
+--
+
+INSERT INTO `ritten` (`id`, `planning_id`, `vertek`, `aankomst`) VALUES
+(2, 1, '2025-01-03 12:25:00.000000', '2025-01-31 12:25:00.000000');
 
 -- --------------------------------------------------------
 
@@ -176,6 +197,14 @@ CREATE TABLE `verkopen` (
   `artikel_id` int(11) NOT NULL,
   `verkocht_op` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Gegevens worden geëxporteerd voor tabel `verkopen`
+--
+
+INSERT INTO `verkopen` (`id`, `klant_id`, `artikel_id`, `verkocht_op`) VALUES
+(2, 2, 5, '2025-01-07 08:59:00'),
+(3, 2, 5, '2025-02-04 08:59:00');
 
 -- --------------------------------------------------------
 
@@ -239,6 +268,13 @@ ALTER TABLE `planning`
   ADD KEY `klant_id` (`klant_id`);
 
 --
+-- Indexen voor tabel `ritten`
+--
+ALTER TABLE `ritten`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `planning_id` (`planning_id`) USING BTREE;
+
+--
 -- Indexen voor tabel `status`
 --
 ALTER TABLE `status`
@@ -280,19 +316,25 @@ ALTER TABLE `categorie`
 -- AUTO_INCREMENT voor een tabel `gebruiker`
 --
 ALTER TABLE `gebruiker`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT voor een tabel `klant`
 --
 ALTER TABLE `klant`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT voor een tabel `planning`
 --
 ALTER TABLE `planning`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+
+--
+-- AUTO_INCREMENT voor een tabel `ritten`
+--
+ALTER TABLE `ritten`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT voor een tabel `status`
@@ -304,7 +346,7 @@ ALTER TABLE `status`
 -- AUTO_INCREMENT voor een tabel `verkopen`
 --
 ALTER TABLE `verkopen`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT voor een tabel `voorraad`
@@ -328,6 +370,12 @@ ALTER TABLE `artikel`
 ALTER TABLE `planning`
   ADD CONSTRAINT `planning_ibfk_2` FOREIGN KEY (`klant_id`) REFERENCES `klant` (`id`),
   ADD CONSTRAINT `planning_ibfk_3` FOREIGN KEY (`artikel_id`) REFERENCES `artikel` (`id`);
+
+--
+-- Beperkingen voor tabel `ritten`
+--
+ALTER TABLE `ritten`
+  ADD CONSTRAINT `ritten_ibfk_1` FOREIGN KEY (`planning_id`) REFERENCES `planning` (`id`);
 
 --
 -- Beperkingen voor tabel `verkopen`
