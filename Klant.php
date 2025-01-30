@@ -8,13 +8,6 @@
 </head>
 <body>
 
-<?php
-$table = "klant";
-$table2 = new Table("klant",false,true);
-?>
-
-
-
 
 </body>
 </html>
