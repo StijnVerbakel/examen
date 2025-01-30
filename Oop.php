@@ -233,7 +233,13 @@ class edit // edit data
                 header("Location: " . $url . ""); // ga terug naar last link
                 exit;
             } catch (PDOException $e) {
-                echo "Error: " . $e->getMessage();
+                // Handle foreign key constraint violation
+                if ($e->getCode() == '23000' && strpos($e->getMessage(), 'foreign key constraint fails') !== false) {
+                    echo "<p class='error'>Een van de id's die is ingevoerd is niet gevonden, weet je zeker dat het bestaat?</p>";
+                    exit;
+                } else {
+                    echo "Error: " . $e->getMessage();
+                }
             }
         }
 
