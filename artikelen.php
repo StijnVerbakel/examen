@@ -16,7 +16,7 @@ echo '<button onclick="window.location.href=\'home.php\'">home</button>';
 include_once('Oop.php');
 session_start();
 
- if ($_SESSION["rol"] === "directie" || $_SESSION["rol"] === "magazijn" ) 
+ if ($_SESSION["rol"] === "directie" || $_SESSION["rol"] === "magazijn" || $_SESSION["rol"] === "winkelpersoneel") 
  {
     $table = new Table("artikel",false, true); // table read only / can sea
 }

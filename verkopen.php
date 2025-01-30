@@ -19,6 +19,9 @@ session_start();
  if ($_SESSION["rol"] === "directie") 
  {
     $table = new Table("verkopen",false, true); // table read only / can sea
+}elseif($_SESSION["rol"] === "winkelpersoneel" ||  $_SESSION["rol"] === "chauffeur"){
+    $table = new Table("verkopen",true, true); // table read only / can sea
+
 }
  else 
  {

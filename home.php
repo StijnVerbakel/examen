@@ -4,15 +4,17 @@ session_start();
 ?>
 <!DOCTYPE html>
 <html lang="nl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menu in Div</title>
-    <style> 
+    <style>
 
 
-    </style>   
+    </style>
 </head>
+
 <body>
     <header class="menu">
         <h1>Kringloop Centrum</h1>
@@ -27,7 +29,7 @@ session_start();
         </div>
 
         <!-- Dropdown menu voor admin -->
-         <div class="dropdown">
+        <div class="dropdown">
             <button class="dropbtn">Admin</button>
             <div class="dropdown-content">
                 <a href="planning.php">Ritten planning</a>
@@ -35,79 +37,118 @@ session_start();
                 <a href="artikelen.php">Artikelen</a>
                 <a href="Klant.php">Klanten</a>
             </div>
-         </div>
-    </header> 
+        </div>
+    </header>
     <div class="grid-container">
         <?php
-        if ( $_SESSION["rol"] === "magazijn" ) 
-        {
-            echo'
+        if ($_SESSION["rol"] === "magazijn") {
+            echo '
     <a href="artikelen.php"><div class="grid-item"> 
 
             <button class="NavButton">Artikelen bekijken</button>
         </div></a>';
-        echo'
+            echo '
         <a href="magazijn.php"><div class="grid-item"> 
     
                 <button class="NavButton">Magazijn bekijken</button>
             </div></a>';
-            echo'
+            echo '
         <a href="categorie.php"><div class="grid-item"> 
     
                 <button class="NavButton">Categorie bekijken</button>
             </div></a>';
-        }elseif ( $_SESSION["rol"] === "directie" )  {
-            echo'
+        } elseif ($_SESSION["rol"] === "directie") {
+            echo '
             <a href="artikelen.php"><div class="grid-item"> 
         
                     <button class="NavButton">Artikelen bekijken</button>
                 </div></a>';
-                echo'
+            echo '
                 <a href="magazijn.php"><div class="grid-item"> 
             
                         <button class="NavButton">Magazijn bekijken</button>
                     </div></a>';
-                    echo'
+            echo '
                 <a href="categorie.php"><div class="grid-item"> 
             
                         <button class="NavButton">Categorie bekijken</button>
                     </div></a>';
-                    echo'
+            echo '
     <a href="gebruiker.php"><div class="grid-item"> 
 
             <button class="NavButton">Gebruikers bekijken</button>
         </div></a>';
-        echo'
+            echo '
         <a href="klant.php"><div class="grid-item"> 
     
                 <button class="NavButton">Klanten bekijken</button>
             </div></a>';
-            echo'
+            echo '
         <a href="status.php"><div class="grid-item"> 
     
                 <button class="NavButton">Status bekijken</button>
             </div></a>';
-        
-            echo'
+
+            echo '
             <a href="verkopen.php"><div class="grid-item"> 
         
                     <button class="NavButton">Verkopen bekijken</button>
                 </div></a>';
 
-                echo'
+            echo '
                 <a href="planning.php"><div class="grid-item"> 
             
                         <button class="NavButton">Planning bekijken</button>
                     </div></a>';
-        }elseif ( $_SESSION["rol"] === "winkelpersoneel" )  {
+        } elseif ($_SESSION["rol"] === "winkelpersoneel") {
+            echo '
+            <a href="verkopen.php"><div class="grid-item"> 
+        
+                    <button class="NavButton">Verkopen bekijken</button>
+                </div></a>';
 
-        }elseif ( $_SESSION["rol"] === "chauffeur" )  {
-
-        }else {
+            echo '
+                    <a href="klant.php"><div class="grid-item"> 
+                
+                            <button class="NavButton">Klanten bekijken</button>
+                        </div></a>';
+            echo '            <a href="artikelen.php"><div class="grid-item"> 
+        
+                    <button class="NavButton">Artikelen bekijken</button>
+                </div></a>';
+            echo '
+                <a href="magazijn.php"><div class="grid-item"> 
+            
+                        <button class="NavButton">Magazijn bekijken</button>
+                    </div></a>';
+            echo '';
+        } elseif ($_SESSION["rol"] === "chauffeur") {
+            echo '
+            <a href="planning.php"><div class="grid-item"> 
+        
+                    <button class="NavButton">Planning bekijken</button>
+                </div></a>';
+                echo '
+                <a href="status.php"><div class="grid-item"> 
+            
+                        <button class="NavButton">Status bekijken</button>
+                    </div></a>';
+                    echo '
+                    <a href="verkopen.php"><div class="grid-item"> 
+                
+                            <button class="NavButton">Verkopen bekijken</button>
+                        </div></a>';
+                    echo '<a href="magazijn.php"><div class="grid-item"> 
+    
+                <button class="NavButton">Magazijn bekijken</button>
+            </div></a>';
+            
+        } else {
 
         }
-?>
+        ?>
 </body>
+
 </html>
 
 

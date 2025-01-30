@@ -1,5 +1,5 @@
 <link rel="stylesheet" href="styles.css">
-<?php 
+<?php
 class Database //database connection 
 {
     private $db = "localhost";
@@ -8,13 +8,14 @@ class Database //database connection
     private $pass = "";
     public $conn;
 
-    function __construct() {
+    function __construct()
+    {
         try {
             $connection = new PDO("mysql:host=$this->db;dbname=$this->dbname", $this->user, $this->pass);
             $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->conn = $connection;
-          
-        }  catch (PDOException $e){
+
+        } catch (PDOException $e) {
             echo "Connection failed: " . $e->getMessage();
         }
     }
@@ -22,29 +23,27 @@ class Database //database connection
 
 class login //login backend (after the post)
 {
-    function __construct() 
+    function __construct()
     {
-        if (!empty($_POST['username']))
-        {
+        if (!empty($_POST['username'])) {
             $username = $_POST['username'];
             $password = $_POST['password'];
             $database = new Database();
-            $conn = $database->conn; 
-        
+            $conn = $database->conn;
+
             $rol = $conn->prepare("SELECT rollen,id,gebruikersnaam From gebruiker WHERE Gebruikersnaam LIKE '%$username%'"); // haal rol van gebruiker uit database
             $rol->execute();
             $rol->setFetchMode(PDO::FETCH_ASSOC);
             $rolreturn = $rol->fetch();
-            
-            if (!empty($rolreturn["gebruikersnaam"]))
-            { //bestaat email?
-           
+
+            if (!empty($rolreturn["gebruikersnaam"])) { //bestaat email?
+
                 $ps = $conn->prepare("SELECT wachtwoord FROM gebruiker WHERE gebruikersnaam = '$username'"); // haal het juiste password uit de database
                 $ps->execute();
                 $ps->setFetchMode(PDO::FETCH_ASSOC);
                 $psreturn = $ps->fetch();
                 $psreturn = ($psreturn["wachtwoord"]);
-          
+
                 if (password_verify($password, $psreturn)) // check password correct
                 { // email en wachtwoord overeen?
                     echo "<br> ingeloged";
@@ -53,19 +52,15 @@ class login //login backend (after the post)
                     $_SESSION["rol"] = $rolreturn['rollen']; // rol sesion
                     $_SESSION["username"] = $username; // username session
                     $_SESSION["userId"] = $rolreturn["id"];   // userid session
-                 
+
                     header("location: home.php");
-                } 
-                else
-                {
-                    echo "<br> inloggen gefaalt"; 
+                } else {
+                    echo "<br> inloggen gefaalt";
 
                 }
-            }
-            else
-            {
+            } else {
                 echo "incorrecte gegevens";
-                
+
             }
         }
     }
@@ -73,45 +68,41 @@ class login //login backend (after the post)
 
 class registreren //registreren van een nieuw persoon/gebruiker in het systeem
 {
-    function __construct() 
-    {  
+    function __construct()
+    {
 
-        if (!empty($_POST['Rol']))
-        {
-            
+        if (!empty($_POST['Rol'])) {
+
             $Rol = $_POST['Rol'];
             $GebruikersNaam = $_POST['gebruikersnaam'];
             $Wachtwoord = $_POST['wachtwoord'];
             $database = new Database();
             $conn = $database->conn;
-       
-            $passwordhash = password_hash($Wachtwoord,PASSWORD_DEFAULT);
+
+            $passwordhash = password_hash($Wachtwoord, PASSWORD_DEFAULT);
             $gmailC = $conn->prepare("SELECT gebruikersnaam From gebruiker WHERE gebruikersnaam LIKE '$GebruikersNaam'"); // zoek oof er al een acount is op dit gmail
             $gmailC->execute();
             $gmailC->setFetchMode(PDO::FETCH_ASSOC);
             $gmailreturn = $gmailC->fetch();
 
             // maak acount
-            if (empty($gmailreturn))
-            { 
-                 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                 $sql = "INSERT INTO gebruiker (rollen, gebruikersnaam, wachtwoord) VALUES ('$Rol', '$GebruikersNaam', '$passwordhash')"; // voegt acount to in database
-                        
-                
-                 $conn->exec($sql);
-                echo "New record created successfully"; 
-            
-               // header("location: index.php");            
-                
-                
-            
-            }
-            else 
-            {
+            if (empty($gmailreturn)) {
+                $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                $sql = "INSERT INTO gebruiker (rollen, gebruikersnaam, wachtwoord) VALUES ('$Rol', '$GebruikersNaam', '$passwordhash')"; // voegt acount to in database
+
+
+                $conn->exec($sql);
+                echo "New record created successfully";
+
+                // header("location: index.php");            
+
+
+
+            } else {
                 echo "op dit gmail is al een acount aangemaakt ";
-                   
-            } 
-            unset($_POST); 
+
+            }
+            unset($_POST);
             $conn = null;
         }
     }
@@ -120,33 +111,29 @@ class registreren //registreren van een nieuw persoon/gebruiker in het systeem
 class Table // Crud table + delete
 {
 
-    function __construct($table,$readonly, $cansee) 
+    function __construct($table, $readonly, $cansee)
     {
-       
-            $database = new Database();
-            $conn = $database->conn;
-            //session_start();
 
-       
-     
+        $database = new Database();
+        $conn = $database->conn;
+        //session_start();
         {
-            echo "<a href='add.php?table=". $table. "'class='add addbutton'>Maak aan</a>";
+            echo "<a href='add.php?table=" . $table . "'class='add addbutton'>Maak aan</a>";
             // Haal de kolomnamen op uit de database
             $stmt = $conn->prepare("DESCRIBE $table");
             $stmt->execute();
             $columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
             $_SESSION["previouslink"] = $_SERVER['REQUEST_URI'];
             $_SESSION["table"] = $table;
-            if (!empty($_GET)) 
-            {
-               
-               $id = $_GET["menuid"];
-               $sql = "DELETE FROM $table WHERE id = $id";
-               $conn->exec($sql);
-               $url = strtok($_SERVER['REQUEST_URI'], '?');
+            if (!empty($_GET)) {
 
-               header("location: ".$url."");
-            } 
+                $id = $_GET["menuid"];
+                $sql = "DELETE FROM $table WHERE id = $id";
+                $conn->exec($sql);
+                $url = strtok($_SERVER['REQUEST_URI'], '?');
+
+                header("location: " . $url . "");
+            }
             if ($cansee == false) {
                 header("location: home.php");
 
@@ -159,10 +146,10 @@ class Table // Crud table + delete
                             <th><?php echo htmlspecialchars($column); ?></th>
                         <?php }
                         if ($readonly == false) {
-                        ?>
-                    
-                        <th>Acties</th>
-                        <?php }?>
+                            ?>
+
+                            <th>Acties</th>
+                        <?php } ?>
                     </tr>
                 </thead>
 
@@ -173,20 +160,19 @@ class Table // Crud table + delete
                     $stmt->execute();
                     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                    foreach ($data as $row) 
-                    {
+                    foreach ($data as $row) {
                         ?>
                         <tr>
                             <?php foreach ($columns as $column) { ?>
                                 <td><?php echo htmlspecialchars($row[$column]); ?></td>
                             <?php } ?>
                             <?php if ($readonly == false) { ?>
-                            <td>
-                                <?php
-                                echo "<a href='./edit.php?menuid=" . $row['id'] . "&table=" . $table . "'>E</a>";
-                                echo "<a href='".$_SERVER['REQUEST_URI']."?menuid=" . $row['id'] . "'>D</a>";
-                                ?>
-                            </td>
+                                <td>
+                                    <?php
+                                    echo "<a href='./edit.php?menuid=" . $row['id'] . "&table=" . $table . "'>E</a>";
+                                    echo "<a href='" . $_SERVER['REQUEST_URI'] . "?menuid=" . $row['id'] . "'>D</a>";
+                                    ?>
+                                </td>
                             <?php } ?>
                         </tr>
                         <?php
@@ -195,29 +181,29 @@ class Table // Crud table + delete
                 </tbody>
             </table>
             <?php
-       
+
         }
-            
+
     }
 }
 
 class edit // edit data
 {
-    function __construct() 
+    function __construct()
     {
         $database = new Database();
         $conn = $database->conn;
         session_start();
 
-        if(!empty($_POST)) // edit verwerken waarneer post is ingevult
+        if (!empty($_POST)) // edit verwerken waarneer post is ingevult
         {
             try {
                 $tableEdit = $_SESSION["tableEdit"];
                 $idEdit = $_SESSION["idEdit"];
                 // Set PDO error mode
                 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            
-                
+
+
                 $sql = "UPDATE $tableEdit SET "; // maak de query
                 $params = [];
                 foreach ($_POST as $column => $value) { // 
@@ -226,83 +212,78 @@ class edit // edit data
                         $params[$column] = $value;
                     }
                 }
-            
+
                 $sql = rtrim($sql, ', '); // trim sql
-            
-               
+
+
                 $sql .= " WHERE id = :id"; // voeg where toe aan sql query
                 $params['id'] = $idEdit;
-            
-                
+
+
                 $stmt = $conn->prepare($sql);
                 $stmt->execute($params); // voer de query uit
-            
+
                 unset($_POST); // leeg post
                 $previouslink = $_SESSION["previouslink"];
                 $url = strtok($previouslink, '?');
-                header("Location: ".$url.""); // ga terug naar last link
+                header("Location: " . $url . ""); // ga terug naar last link
                 exit;
-            } 
-            catch (PDOException $e) 
-            {
+            } catch (PDOException $e) {
                 echo "Error: " . $e->getMessage();
             }
         }
-      
+
 
         $table = $_GET["table"];
         $id = $_GET["menuid"];
         $_SESSION["tableEdit"] = $table;
         $_SESSION["idEdit"] = $id;
-        
+
         $edit = $conn->prepare("SELECT * FROM $table WHERE Id = :id"); // selecteer opbasis van het id en de table de row om de bewerken
         $edit->bindParam(':id', $id, PDO::PARAM_INT);
         $edit->execute();
         $edit->setFetchMode(PDO::FETCH_ASSOC);
         $editdata = $edit->fetch();
-        
+
         if ($editdata)  //maak de form
         {
             echo '<form method="POST" action="./edit.php">';
             foreach ($editdata as $key => $value) {
                 echo '<div>';
                 echo '<label for="' . htmlspecialchars($key) . '">' . htmlspecialchars($key) . ':</label>';
-               if ($key === 'ProductText') {
-                // Textarea for longer text
-                echo '<textarea name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '"></textarea>';
-            } elseif ($key === 'ophalen_of_bezorgen') {
-                // File input for photo (Note: Make sure to handle file uploads correctly)
-                echo '<select name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
-                echo '<option value="Ophalen">Ophalen</option>';
-                echo '<option value="Bezorgen">Bezorgen</option>';
-                echo '</select>';
-                            } elseif ($key === 'afspraak_op') {
-                // File input for photo (Note: Make sure to handle file uploads correctly)
-                echo '<input type="datetime-local" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
-            }
-        elseif ($key === 'ingeboekt_op' || $key === "afspraak_op" || $key === "verkocht_op") {
-            // File input for photo (Note: Make sure to handle file uploads correctly)
-            echo '<input type="datetime-local" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '"value="'.$key.'">';
-        } else {
-                // Standard text input
-                echo '<input type="text" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '"value="'.htmlspecialchars($value).'">';
-            }
+                if ($key === 'ProductText') {
+                    // Textarea for longer text
+                    echo '<textarea name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '"></textarea>';
+                } elseif ($key === 'ophalen_of_bezorgen') {
+                    // File input for photo (Note: Make sure to handle file uploads correctly)
+                    echo '<select name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
+                    echo '<option value="Ophalen">Ophalen</option>';
+                    echo '<option value="Bezorgen">Bezorgen</option>';
+                    echo '</select>';
+                } elseif ($key === 'afspraak_op') {
+                    // File input for photo (Note: Make sure to handle file uploads correctly)
+                    echo '<input type="datetime-local" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
+                } elseif ($key === 'ingeboekt_op' || $key === "afspraak_op" || $key === "verkocht_op") {
+                    // File input for photo (Note: Make sure to handle file uploads correctly)
+                    echo '<input type="datetime-local" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '"value="' . $key . '">';
+                } else {
+                    // Standard text input
+                    echo '<input type="text" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '"value="' . htmlspecialchars($value) . '">';
+                }
                 echo '</div>';
             }
             echo '<button type="submit">Submit</button>';
-            
+
             echo '</form>';
-        } 
-        else 
-        {
+        } else {
             echo 'No data found.'; // catch
-        } 
-    }  
+        }
+    }
 }
 
 class Add // Add data to table
 {
-    function __construct() 
+    function __construct()
     {
         // Initialize the database connection
         $database = new Database();
@@ -324,7 +305,7 @@ class Add // Add data to table
         try {
             // Get the table name from the GET parameter
             $tableAdd = $_GET["table"];
-            
+
             if (empty($tableAdd)) {
                 echo 'Table name is missing.';
                 exit;
@@ -362,8 +343,8 @@ class Add // Add data to table
             $url = strtok($previouslink, '?');
 
             // Redirect to the admin panel after adding the data
-            header("Location: ".$url."");
-            
+            header("Location: " . $url . "");
+
             exit;
 
         } catch (PDOException $e) {
@@ -392,38 +373,38 @@ class Add // Add data to table
         }
 
         // Start the form
-        echo '<form method="POST" action="./add.php?table='.$tableAdd.'">'; // Change action to match the correct script
+        echo '<form method="POST" action="./add.php?table=' . $tableAdd . '">'; // Change action to match the correct script
         foreach ($columnsData as $column) {
-            
+
             $key = $column['Field'];
             if ($key == 'id') {
-            }else{
-            echo '<div>';
-            echo '<label for="' . htmlspecialchars($key) . '">' . htmlspecialchars($key) . ':</label>';
+            } else {
+                echo '<div>';
+                echo '<label for="' . htmlspecialchars($key) . '">' . htmlspecialchars($key) . ':</label>';
 
-            // Render different input types based on column name
-            if ($key === 'ProductText') {
-                // Textarea for longer text
-                echo '<textarea name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '"></textarea>';
-            } elseif ($key === 'ophalen_of_bezorgen') {
-                // File input for photo (Note: Make sure to handle file uploads correctly)
-                echo '<select name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
-                echo '<option value="Ophalen">Ophalen</option>';
-                echo '<option value="Bezorgen">Bezorgen</option>';
-                echo '</select>';
-            }   elseif ($key === 'ingeboekt_op' || $key === "afspraak_op" || $key === "verkocht_op") {
+                // Render different input types based on column name
+                if ($key === 'ProductText') {
+                    // Textarea for longer text
+                    echo '<textarea name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '"></textarea>';
+                } elseif ($key === 'ophalen_of_bezorgen') {
                     // File input for photo (Note: Make sure to handle file uploads correctly)
-                echo '<input type="datetime-local" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
+                    echo '<select name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
+                    echo '<option value="Ophalen">Ophalen</option>';
+                    echo '<option value="Bezorgen">Bezorgen</option>';
+                    echo '</select>';
+                } elseif ($key === 'ingeboekt_op' || $key === "afspraak_op" || $key === "verkocht_op") {
+                    // File input for photo (Note: Make sure to handle file uploads correctly)
+                    echo '<input type="datetime-local" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
+                } elseif ($key === 'ingeboekt_op') {
+                    // File input for photo (Note: Make sure to handle file uploads correctly)
+                    echo '<input type="datetime-local" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
+                } else {
+                    // Standard text input
+                    echo '<input type="text" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
+                }
+                echo '</div>';
             }
-        elseif ($key === 'ingeboekt_op') {
-            // File input for photo (Note: Make sure to handle file uploads correctly)
-            echo '<input type="datetime-local" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
-        } else {
-                // Standard text input
-                echo '<input type="text" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
-            }
-            echo '</div>';
-            }}
+        }
 
         // Submit button for the form
         echo '<button type="submit">Submit</button>';
@@ -433,14 +414,14 @@ class Add // Add data to table
 
 class pwf // wachtwoord vergeten 
 {
-    function __construct() 
+    function __construct()
     {
         $database = new Database(); // database connectie
         $conn = $database->conn;
         $username = $_GET["username"]; // info uit get
         $password = $_GET["password"];
 
-        $passwordhash = password_hash($password,PASSWORD_DEFAULT); // password hash voor de set in database
+        $passwordhash = password_hash($password, PASSWORD_DEFAULT); // password hash voor de set in database
 
         $gCeck = $conn->prepare("SELECT gebruikersnaam From gebruiker WHERE gebruikersnaam LIKE '$username'"); // kijk of username er wel is
         $gCeck->execute();
@@ -453,12 +434,10 @@ class pwf // wachtwoord vergeten
             $sql = "UPDATE gebruiker SET wachtwoord = '$passwordhash' WHERE gebruikersnaam = '$username';"; // update het nieuwe wachtwoord in de database
             $conn->exec($sql);
             header("location: index.php");
-        }
-        else 
-        {
+        } else {
             echo "Geen geldig gebruikersnaam";
         }
-    } 
+    }
 }
 ?>
 
