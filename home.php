@@ -1,7 +1,10 @@
 <?php
 include_once('Oop.php');
 session_start();
-?>
+if ($_SESSION["rol"] == null) {
+    header("Location:index.php");
+}
+    ?>
 <!DOCTYPE html>
 <html lang="nl">
 
@@ -18,26 +21,10 @@ session_start();
 <body>
     <header class="menu">
         <h1>Kringloop Centrum</h1>
-        <a href="home.php">Home</a>
+        <a href="Logout.php">Logout</a>
 
-        <!-- Dropdown menu voor ritten -->
-        <div class="dropdown">
-            <button class="dropbtn">Ritten</button>
-            <div class="dropdown-content">
-                <a href="planning.php">Ritten planning</a>
-            </div>
-        </div>
 
-        <!-- Dropdown menu voor admin -->
-        <div class="dropdown">
-            <button class="dropbtn">Admin</button>
-            <div class="dropdown-content">
-                <a href="planning.php">Ritten planning</a>
-                <a href="magazijn.php">Voorraadbeheer</a>
-                <a href="artikelen.php">Artikelen</a>
-                <a href="Klant.php">Klanten</a>
-            </div>
-        </div>
+
     </header>
     <div class="grid-container">
         <?php

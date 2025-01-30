@@ -118,6 +118,10 @@ class Table // Crud table + delete
         $conn = $database->conn;
         //session_start();
         {
+            if (empty($_SESSION)) {
+                header("Location:index.php");
+            } 
+
             echo "<a href='add.php?table=" . $table . "'class='add addbutton'>Maak aan</a>";
             // Haal de kolomnamen op uit de database
             $stmt = $conn->prepare("DESCRIBE $table");
@@ -418,8 +422,9 @@ class pwf // wachtwoord vergeten
     {
         $database = new Database(); // database connectie
         $conn = $database->conn;
-        $username = $_GET["username"]; // info uit get
-        $password = $_GET["password"];
+        if ($_POST) {
+        $username = $_POST["username"]; // info uit get
+        $password = $_POST["password"];
 
         $passwordhash = password_hash($password, PASSWORD_DEFAULT); // password hash voor de set in database
 
@@ -437,7 +442,7 @@ class pwf // wachtwoord vergeten
         } else {
             echo "Geen geldig gebruikersnaam";
         }
-    }
+    }}
 }
 ?>
 
