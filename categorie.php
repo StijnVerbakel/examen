@@ -18,14 +18,14 @@ session_start();
 
  if ($_SESSION["rol"] === "directie" )   
  {
-    $table = new Table("categorie",false, true); // table read only / can sea
+    $table = new Table("categorie",false, true); // table read only / can see
 }elseif ( $_SESSION["rol"] === "magazijn"){
-    $table = new Table("categorie",true, true); // table read only / can sea
+    $table = new Table("categorie",true, true); // table read only / can see
 
 }
  else 
  {
- $table2 = new Table("categorie",true, false); // table read only / can sea
+ $table2 = new Table("categorie",true, false); // table read only / can see
  }
 
 
