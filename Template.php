@@ -12,17 +12,17 @@
 </html>
 
 <?php 
-echo '<button onclick="window.location.href=\'home.php\'">home</button>';
+echo '<button onclick="window.location.href=\'home.php\'">Home</button>';
 include_once('Oop.php');
 session_start();
 
- if ($_SESSION["rol"] === "directie" || $_SESSION["rol"] === "magazijn" ) 
+ if ($_SESSION["rol"] === "directie") 
  {
-    $table = new Table("artikel",false, true); // table read only / can sea
+    $table = new Table("gebruiker",false, true); // table read only / can sea
 }
  else 
  {
- $table2 = new Table("artikel",true, false); // table read only / can sea
+ $table2 = new Table("gebruiker",true, false); // table read only / can sea
  }
 
 
