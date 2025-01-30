@@ -8,6 +8,14 @@
 </head>
 <body>
 
+<?php
+$table = "klant";
+$table2 = new Table("klant",false,true);
+?>
+
+
+
+
 </body>
 </html>
 
@@ -31,4 +39,5 @@ session_start();
 <!-- 
 Document Name: planning.php
 Made by: sem van Haaften
+>>>>>>> f55da59f73d526302d11c12a9a91da736758ad82
 -->

@@ -29,7 +29,7 @@ session_start();
 ?>
 
 <!-- 
-Document Name: planning.php
-Made by: sem van Haaften
+Document Name: status.php
+Made by: Anouk Grandia, Lauro El-Bagdadi, Stijn Verbakel en Sem van Haaften
 -->
 

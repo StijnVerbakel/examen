@@ -54,5 +54,5 @@ $registreren = new registreren();
 
 <!-- 
 Document Name: registreren.php
-Made by: Stijn Verbakel
+Made by: Anouk Grandia, Lauro El-Bagdadi, Stijn Verbakel en Sem van Haaften
 -->
