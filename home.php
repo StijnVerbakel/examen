@@ -1,7 +1,7 @@
 <?php
 include_once('Oop.php');
 session_start();
-var_dump($_SESSION)
+var_dump($_SESSION);
 ?>
 <!DOCTYPE html>
 <html lang="nl">
