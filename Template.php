@@ -29,6 +29,6 @@ session_start();
 ?>
 
 <!-- 
-Document Name: planning.php
-Made by: sem van Haaften
+Document Name: Template.php
+Made by: Sem van Haaften
 -->

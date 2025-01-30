@@ -25,6 +25,6 @@ $login = new login();
 ?>
 
 <!-- 
-Document Name: Index.php
+Document Name: index.php
 Made by: Anouk Grandia, Lauro El-Bagdadi, Stijn Verbakel en Sem van Haaften
 -->
