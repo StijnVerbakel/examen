@@ -19,11 +19,11 @@ session_start();
 
  if ($_SESSION["rol"] === "directie" || $_SESSION["rol"] === "chauffeur" || $_SESSION["rol"] === "winkelpersoneel") 
  {
-    $table = new Table("planning",false, true); // table read only / can sea
+    $table = new Table("planning",false, true); // table read only / can see
 }
  else 
  {
- $table2 = new Table("planning",true, false); // table read only / can sea
+ $table2 = new Table("planning",true, false); // table read only / can see
  }
 
 

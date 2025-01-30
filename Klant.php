@@ -19,11 +19,11 @@ session_start();
 
  if ($_SESSION["rol"] === "directie"|| $_SESSION["rol"] === "winkelpersoneel") 
  {
-    $table = new Table("klant",false, true); // table read only / can sea
+    $table = new Table("klant",false, true); // table read only / can see
 }
  else 
  {
- $table2 = new Table("klant",true, cansee: false); // table read only / can sea
+ $table2 = new Table("klant",true, cansee: false); // table read only / can see
  }
 
 
@@ -31,6 +31,6 @@ session_start();
 
 <!-- 
 Document Name: Klant.php
-Made by: sem van Haaften
+Made by: Sem van Haaften
 >>>>>>> f55da59f73d526302d11c12a9a91da736758ad82
 -->

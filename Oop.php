@@ -31,7 +31,7 @@ class login //login backend (after the post)
             $database = new Database();
             $conn = $database->conn;
 
-            $rol = $conn->prepare("SELECT rollen,id,gebruikersnaam From gebruiker WHERE Gebruikersnaam LIKE '%$username%'"); // haal rol van gebruiker uit database
+            $rol = $conn->prepare("SELECT rollen,id,gebruikersnaam FROM gebruiker WHERE Gebruikersnaam LIKE '%$username%'"); // haal rol van gebruiker uit database
             $rol->execute();
             $rol->setFetchMode(PDO::FETCH_ASSOC);
             $rolreturn = $rol->fetch();
@@ -49,7 +49,7 @@ class login //login backend (after the post)
                     echo "<br> ingeloged";
                     unset($_POST); // leeg $_Post
                     session_start();
-                    $_SESSION["rol"] = $rolreturn['rollen']; // rol sesion
+                    $_SESSION["rol"] = $rolreturn['rollen']; // rol session
                     $_SESSION["username"] = $username; // username session
                     $_SESSION["userId"] = $rolreturn["id"];   // userid session
 
@@ -80,15 +80,15 @@ class registreren //registreren van een nieuw persoon/gebruiker in het systeem
             $conn = $database->conn;
 
             $passwordhash = password_hash($Wachtwoord, PASSWORD_DEFAULT);
-            $gmailC = $conn->prepare("SELECT gebruikersnaam From gebruiker WHERE gebruikersnaam LIKE '$GebruikersNaam'"); // zoek oof er al een acount is op dit gmail
+            $gmailC = $conn->prepare("SELECT gebruikersnaam FROM gebruiker WHERE gebruikersnaam LIKE '$GebruikersNaam'"); // zoek of er al een account is met dit emailadres
             $gmailC->execute();
             $gmailC->setFetchMode(PDO::FETCH_ASSOC);
             $gmailreturn = $gmailC->fetch();
 
-            // maak acount
+            // maak account
             if (empty($gmailreturn)) {
                 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                $sql = "INSERT INTO gebruiker (rollen, gebruikersnaam, wachtwoord) VALUES ('$Rol', '$GebruikersNaam', '$passwordhash')"; // voegt acount to in database
+                $sql = "INSERT INTO gebruiker (rollen, gebruikersnaam, wachtwoord) VALUES ('$Rol', '$GebruikersNaam', '$passwordhash')"; // voegt account to in database
 
 
                 $conn->exec($sql);
@@ -99,7 +99,7 @@ class registreren //registreren van een nieuw persoon/gebruiker in het systeem
 
 
             } else {
-                echo "op dit gmail is al een acount aangemaakt ";
+                echo "op dit gmail is al een account aangemaakt ";
 
             }
             unset($_POST);
@@ -243,7 +243,7 @@ class edit // edit data
         $_SESSION["tableEdit"] = $table;
         $_SESSION["idEdit"] = $id;
 
-        $edit = $conn->prepare("SELECT * FROM $table WHERE Id = :id"); // selecteer opbasis van het id en de table de row om de bewerken
+        $edit = $conn->prepare("SELECT * FROM $table WHERE Id = :id"); // selecteer op basis van het id en de table de row om de bewerken
         $edit->bindParam(':id', $id, PDO::PARAM_INT);
         $edit->execute();
         $edit->setFetchMode(PDO::FETCH_ASSOC);
@@ -434,7 +434,7 @@ class pwf // wachtwoord vergeten
 
         $passwordhash = password_hash($password, PASSWORD_DEFAULT); // password hash voor de set in database
 
-        $gCeck = $conn->prepare("SELECT gebruikersnaam From gebruiker WHERE gebruikersnaam LIKE '$username'"); // kijk of username er wel is
+        $gCeck = $conn->prepare("SELECT gebruikersnaam FROM gebruiker WHERE gebruikersnaam LIKE '$username'"); // kijk of username er wel is
         $gCeck->execute();
         $gCeck->setFetchMode(PDO::FETCH_ASSOC);
         $gCheckReturn = $gCeck->fetch();
