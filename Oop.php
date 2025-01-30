@@ -209,7 +209,7 @@ class edit // edit data
         $conn = $database->conn;
         session_start();
 
-        if(!empty($_POST)) // edit verwerken
+        if(!empty($_POST)) // edit verwerken waarneer post is ingevult
         {
             try {
                 $tableEdit = $_SESSION["tableEdit"];
@@ -217,35 +217,34 @@ class edit // edit data
                 // Set PDO error mode
                 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             
-                // Start building the SQL query
-                $sql = "UPDATE $tableEdit SET ";
+                
+                $sql = "UPDATE $tableEdit SET "; // maak de query
                 $params = [];
-                foreach ($_POST as $column => $value) {
-                    // Skip if the column is empty
-                    if (!empty($value)) {
+                foreach ($_POST as $column => $value) { // 
+                    if (!empty($value)) { // als empty sla over anders voeg toe aan query
                         $sql .= "$column = :$column, ";
                         $params[$column] = $value;
                     }
                 }
             
-                // Remove the trailing comma and space
-                $sql = rtrim($sql, ', ');
+                $sql = rtrim($sql, ', '); // trim sql
             
-                // Add the WHERE clause
-                $sql .= " WHERE id = :id";
+               
+                $sql .= " WHERE id = :id"; // voeg where toe aan sql query
                 $params['id'] = $idEdit;
             
-                // Prepare and execute the statement
+                
                 $stmt = $conn->prepare($sql);
-                $stmt->execute($params);
+                $stmt->execute($params); // voer de query uit
             
-                unset($_POST);
-                // Redirect to the admin panel
+                unset($_POST); // leeg post
                 $previouslink = $_SESSION["previouslink"];
                 $url = strtok($previouslink, '?');
-                header("Location: ".$url."");
+                header("Location: ".$url.""); // ga terug naar last link
                 exit;
-            } catch (PDOException $e) {
+            } 
+            catch (PDOException $e) 
+            {
                 echo "Error: " . $e->getMessage();
             }
         }
@@ -256,13 +255,13 @@ class edit // edit data
         $_SESSION["tableEdit"] = $table;
         $_SESSION["idEdit"] = $id;
         
-        $edit = $conn->prepare("SELECT * FROM $table WHERE Id = :id");
+        $edit = $conn->prepare("SELECT * FROM $table WHERE Id = :id"); // selecteer opbasis van het id en de table de row om de bewerken
         $edit->bindParam(':id', $id, PDO::PARAM_INT);
         $edit->execute();
         $edit->setFetchMode(PDO::FETCH_ASSOC);
         $editdata = $edit->fetch();
         
-        if ($editdata) 
+        if ($editdata)  //maak de form
         {
             echo '<form method="POST" action="./edit.php">';
             foreach ($editdata as $key => $value) {
@@ -297,7 +296,7 @@ class edit // edit data
         } 
         else 
         {
-            echo 'No data found.';
+            echo 'No data found.'; // catch
         } 
     }  
 }
