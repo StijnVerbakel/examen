@@ -5,6 +5,6 @@ $add = new add();
 
 
 <!-- 
-Document Name: edit.php
-Made by: Stijn Verbakel
+Document Name: add.php
+Made by: Anouk Grandia, Lauro El-Bagdadi, Stijn Verbakel en Sem van Haaften
 -->

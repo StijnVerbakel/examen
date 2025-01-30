@@ -465,5 +465,5 @@ class pwf // wachtwoord vergeten
 
 <!-- 
 Document Name: Oop.php
-Made by: Stijn Verbakel
+Made by: Anouk Grandia, Lauro El-Bagdadi, Stijn Verbakel en Sem van Haaften
 -->

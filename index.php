@@ -26,5 +26,5 @@ $login = new login();
 
 <!-- 
 Document Name: Index.php
-Made by: Stijn Verbakel
+Made by: Anouk Grandia, Lauro El-Bagdadi, Stijn Verbakel en Sem van Haaften
 -->

@@ -61,5 +61,5 @@ var_dump($_SESSION);
 
 <!-- 
 Document Name: home.php
-Made by: Sem van Haaften
+Made by: Anouk Grandia, Lauro El-Bagdadi, Stijn Verbakel en Sem van Haaften
 -->
