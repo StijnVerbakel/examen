@@ -280,7 +280,7 @@ class edit // edit data
                 // File input for photo (Note: Make sure to handle file uploads correctly)
                 echo '<input type="datetime-local" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
             }
-        elseif ($key === 'ingeboekt_op' || $key === "afspraak_op") {
+        elseif ($key === 'ingeboekt_op' || $key === "afspraak_op" || $key === "verkocht_op") {
             // File input for photo (Note: Make sure to handle file uploads correctly)
             echo '<input type="datetime-local" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '"value="'.$key.'">';
         } else {
@@ -291,7 +291,6 @@ class edit // edit data
             }
             echo '<button type="submit">Submit</button>';
             
-            echo '<button onclick="window.location.href=\'./crud.php\'">Admin</button>'; 
             echo '</form>';
         } 
         else 
@@ -412,8 +411,8 @@ class Add // Add data to table
                 echo '<option value="Ophalen">Ophalen</option>';
                 echo '<option value="Bezorgen">Bezorgen</option>';
                 echo '</select>';
-                            } elseif ($key === 'afspraak_op') {
-                // File input for photo (Note: Make sure to handle file uploads correctly)
+            }   elseif ($key === 'ingeboekt_op' || $key === "afspraak_op" || $key === "verkocht_op") {
+                    // File input for photo (Note: Make sure to handle file uploads correctly)
                 echo '<input type="datetime-local" name="' . htmlspecialchars($key) . '" id="' . htmlspecialchars($key) . '">';
             }
         elseif ($key === 'ingeboekt_op') {

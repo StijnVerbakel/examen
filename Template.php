@@ -8,14 +8,6 @@
 </head>
 <body>
 
-<?php
-$table = "klant";
-$table2 = new Table("klant",false,true);
-?>
-
-
-
-
 </body>
 </html>
 
@@ -26,11 +18,11 @@ session_start();
 
  if ($_SESSION["rol"] === "directie") 
  {
-    $table = new Table("klant",false, true); // table read only / can sea
+    $table = new Table("gebruiker",false, true); // table read only / can sea
 }
  else 
  {
- $table2 = new Table("klant",true, cansee: false); // table read only / can sea
+ $table2 = new Table("gebruiker",true, false); // table read only / can sea
  }
 
 
@@ -39,5 +31,4 @@ session_start();
 <!-- 
 Document Name: planning.php
 Made by: sem van Haaften
->>>>>>> f55da59f73d526302d11c12a9a91da736758ad82
 -->
